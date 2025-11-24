@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Smart Focus Monitoring — Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+* { box-sizing: border-box; margin:0; padding:0; }
+html, body { width:100%; height:100%; font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; overflow:hidden; }
+body { background: #06130a; color: #cfeeca; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+.wrap { width:100%; height:100%; display:flex; flex-direction:column; }
+.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; background: rgba(255,255,255,0.02); border-radius:12px; padding:18px 22px; box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02); border: 1px solid rgba(64, 255, 115, 0.06); flex-shrink:0; }
+.brand { font-weight:700; color:#dfffe0; letter-spacing:1px; font-size:18px; }
+.overall { text-align:center; flex:1; color:#b8ff9a; font-weight:700; font-size:20px; }
+.timer { color:#aee6b0; font-size:14px; opacity:0.9; }
+.main { display:flex; flex:1; gap:18px; padding:10px; overflow:hidden; }
+.left-panel { flex:1; display:flex; flex-direction:column; overflow-y:auto; }
+.panel { background: rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid rgba(64,255,115,0.04); box-shadow: 0 6px 20px rgba(0,0,0,0.5); margin-bottom:10px; }
+.panel h3 { color:#d9ffde; margin-bottom:10px; font-size:16px; }
+.student { display:flex; align-items:center; gap:10px; padding:10px 6px; border-radius:8px; margin-bottom:10px; transition: background .15s; }
+.student:hover { background: rgba(0,0,0,0.12); }
+.avatar { width:40px;height:40px;border-radius:50%; background: linear-gradient(135deg,#68ff75,#27b24a); display:flex;align-items:center;justify-content:center;color:#04340a;font-weight:700; box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 -2px 6px rgba(255,255,255,0.08); }
+.smeta { flex:1; font-size:13px; color:#bfecc3; }
+.smeta .name { display:block; font-weight:600; color:#eaffdf; }
+.smeta .percent { font-size:12px; color:#9fe1a3; opacity:0.9; }
+.bar { width:80px;height:8px;border-radius:6px;background:rgba(255,255,255,0.03); overflow:hidden; margin-left:8px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
+.bar > i { display:block;height:100%; background: linear-gradient(90deg,#9eff7b,#26e86a); }
+.center { flex:2; display:flex; flex-direction:column; align-items:center; gap:12px; overflow:hidden; }
+.camera-frame { flex:1; width:100%; border-radius:18px; background: linear-gradient(180deg, rgba(10,20,10,0.6), rgba(0,0,0,0.6)); display:flex; align-items:center; justify-content:center; position:relative; box-shadow: 0 12px 40px rgba(0,0,0,0.6); border: 3px solid rgba(64,255,115,0.06); overflow:hidden; }
+.camera-frame .neon-border { position:absolute; inset:8px; border-radius:12px; pointer-events:none; box-shadow: 0 0 40px rgba(46,255,120,0.08), 0 0 10px rgba(46,255,120,0.06), inset 0 0 30px rgba(46,255,120,0.03); border: 2px solid rgba(46,255,120,0.12); }
+.video-box { width:92%; height:92%; border-radius:10px; overflow:hidden; display:flex; align-items:center; justify-content:center; background: radial-gradient(ellipse at center, rgba(0,0,0,0.35), rgba(0,0,0,0.6)); position:relative; }
+.video-box iframe, .video-box img, .video-box video { width:100%; height:100%; object-fit:cover; border:0; }
+.right-panel { flex:0 0 300px; display:flex; flex-direction:column; gap:12px; }
+.student-sidebar { position:absolute; right:0; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:12px; padding:10px; }
+.student-num { background:rgba(64,255,115,0.1); color:#dfffe0; font-weight:700; text-align:center; border-radius:6px; padding:6px; }
+.controls { margin-top:12px; background: rgba(255,255,255,0.02); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:12px; border:1px solid rgba(64,255,115,0.04); }
+.btn { padding:10px 24px; border-radius:8px; border:0; cursor:pointer; color:#06220e; font-weight:700; letter-spacing:0.4px; box-shadow: 0 6px 18px rgba(0,0,0,0.45); transition: transform .12s, box-shadow .12s; }
+.btn:hover { transform: translateY(-3px); }
+.btn.stop { background:#0f8a4a; color:#eafaf0; }
+.btn.view { background:#0b6fb6; color:white; }
+.btn.start { background:#ffffff; color:#09210c; }
+.btn.random { background:#ff5050; color:white; }
+.chart-container { background: rgba(255,255,255,0.02); border-radius:12px; padding:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="topbar">
+<div class="brand">SMART FOCUS MONITORING SYSTEM</div>
+<div class="overall" id="overallText">OVERALL CLASS FOCUS: -- %</div>
+<div class="timer" id="sessionTimer">Session Timer: 00:00:00</div>
+</header>
+<main class="main">
+<section class="left-panel">
+<h3>INDIVIDUAL STUDENT FOCUS</h3>
+<div id="studentsList"></div>
+<div class="chart-container">
+<canvas id="overallChart"></canvas>
+</div>
+</section>
+<section class="center">
+<div class="camera-frame">
+<div class="neon-border"></div>
+<div class="video-box" id="videoBox">
+<p style="color:#bfecc3;">🎥 Click Start Monitoring to begin</p>
+</div>
+<div class="student-sidebar" id="studentSidebar"></div>
+</div>
+<div class="controls">
+<button class="btn stop" onclick="stopMonitoring()">STOP MONITORING</button>
+<button class="btn view" onclick="window.location.href='historical.html'">VIEW HISTORICAL DATA</button>
+<button class="btn start" onclick="startMonitoring()">START MONITORING</button>
+<button class="btn random" onclick="selectRandomStudent()">SELECT RANDOM STUDENT</button>
+</div>
+</section>
+<aside class="right-panel">
+<h3>AGGREGATE ANALYTICS</h3>
+<div class="mini-chart"></div>
+<div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+<div style="font-weight:700;color:#dfffe0;">ATTENTION STATES</div>
+<div style="color:#9fe1a3;font-weight:700;" id="avgFocusRight">--%</div>
+</div>
+<div style="font-size:12px;color:#bfecc3;"> Most distracted period: <strong>10:15 - 10:20</strong><br/>
+Average focus: <strong id="avgFocusText">--%</strong>
+</div>
+</aside>
+</main>
+</div>
+<script>
+function startMonitoring(){
+document.getElementById('videoBox').innerHTML = "<iframe src='{{ url_for('video_feed') }}' frameborder='0' allow='camera' style='width:100%;height:100%;'></iframe>";
+}
+function stopMonitoring(){
+document.getElementById('videoBox').innerHTML = "<p style='color:#bfecc3;'>🛑 Monitoring Stopped. Click 'Start Monitoring' to begin again.</p>";
+}
+
+const studentsList = document.getElementById('studentsList');
+const studentSidebar = document.getElementById('studentSidebar');
+
+let students = [
+{name:"Student 1", pct:78},
+{name:"Student 2", pct:92},
+{name:"Student 3", pct:82},
+{name:"Student 4", pct:56},
+{name:"Student 5", pct:57}
+];
+
+let selectedStudentIndex = null;
+
+function renderStudents(){
+studentsList.innerHTML = "";
+studentSidebar.innerHTML = "";
+students.forEach((s, i) => {
+let borderColor = (selectedStudentIndex === i) ? 'red' : 'green';
+studentsList.innerHTML += `<div class="student" style="border:2px solid ${borderColor}; padding:8px; border-radius:8px;">
+<div class="avatar">${i+1}</div>
+<div class="smeta">
+<span class="name">${s.name}</span>
+<span class="percent">${s.pct}%</span>
+</div>
+<div class="bar"><i style="width:${s.pct}%"></i></div>
+</div>`;
+studentSidebar.innerHTML += `<div class="student-num">${i+1}<br/>${s.pct}%</div>`;
+});
+}
+
+function selectRandomStudent(){
+selectedStudentIndex = Math.floor(Math.random()*students.length);
+renderStudents();
+}
+
+renderStudents();
+
+function updateOverallSim(){
+const avg = Math.round(students.reduce((a,b)=>a+b.pct,0)/students.length);
+document.getElementById('overallText').innerText = `OVERALL CLASS FOCUS: ${avg}%`;
+document.getElementById('avgFocusText').innerText = `${avg}%`;
+document.getElementById('avgFocusRight').innerText = `${avg}%`;
+addChartData(avg);
+}
+updateOverallSim();
+setInterval(updateOverallSim, 5000);
+
+let startTime = Date.now();
+function tickTimer(){
+const s = Math.floor((Date.now()-startTime)/1000);
+const h = String(Math.floor(s/3600)).padStart(2,'0');
+const m = String(Math.floor((s%3600)/60)).padStart(2,'0');
+const sec = String(s%60).padStart(2,'0');
+document.getElementById('sessionTimer').innerText = `Session Timer: ${h}:${m}:${sec}`;
+}
+setInterval(tickTimer,1000);
+
+// --- Chart.js Real-time Chart ---
+const ctx = document.getElementById('overallChart').getContext('2d');
+const overallChart = new Chart(ctx, {
+type:'line',
+data:{
+labels: [],
+datasets:[{
+label:'Overall Focus',
+data: [],
+borderColor:'#26e86a',
+backgroundColor:'rgba(38,232,106,0.2)',
+fill:true,
+tension:0.3
+}]
+},
+options:{
+responsive:true,
+animation:false,
+scales:{
+y:{ min:0, max:100 }
+}
+}
+});
+function addChartData(value){
+const timeLabel = new Date().toLocaleTimeString();
+overallChart.data.labels.push(timeLabel);
+overallChart.data.datasets[0].data.push(value);
+if(overallChart.data.labels.length>20){
+overallChart.data.labels.shift();
+overallChart.data.datasets[0].data.shift();
+}
+overallChart.update();
+}
+</script>
+</body>
+</html>
+
+
+
