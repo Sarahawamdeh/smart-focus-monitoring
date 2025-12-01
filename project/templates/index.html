@@ -3,191 +3,318 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Smart Focus Monitoring — Dashboard</title>
+<title>Smart Focus Monitoring — Yarmouk University</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin:0; padding:0; }
-html, body { width:100%; height:100%; font-family: "Poppins", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; overflow:hidden; }
-body { background: #06130a; color: #cfeeca; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-.wrap { width:100%; height:100%; display:flex; flex-direction:column; }
-.topbar { display:flex; align-items:center; justify-content:space-between; gap:12px; background: rgba(255,255,255,0.02); border-radius:12px; padding:18px 22px; box-shadow: 0 8px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02); border: 1px solid rgba(64, 255, 115, 0.06); flex-shrink:0; }
-.brand { font-weight:700; color:#dfffe0; letter-spacing:1px; font-size:18px; }
-.overall { text-align:center; flex:1; color:#b8ff9a; font-weight:700; font-size:20px; }
-.timer { color:#aee6b0; font-size:14px; opacity:0.9; }
-.main { display:flex; flex:1; gap:18px; padding:10px; overflow:hidden; }
-.left-panel { flex:1; display:flex; flex-direction:column; overflow-y:auto; }
-.panel { background: rgba(255,255,255,0.02); padding:16px; border-radius:12px; border:1px solid rgba(64,255,115,0.04); box-shadow: 0 6px 20px rgba(0,0,0,0.5); margin-bottom:10px; }
-.panel h3 { color:#d9ffde; margin-bottom:10px; font-size:16px; }
-.student { display:flex; align-items:center; gap:10px; padding:10px 6px; border-radius:8px; margin-bottom:10px; transition: background .15s; }
-.student:hover { background: rgba(0,0,0,0.12); }
-.avatar { width:40px;height:40px;border-radius:50%; background: linear-gradient(135deg,#68ff75,#27b24a); display:flex;align-items:center;justify-content:center;color:#04340a;font-weight:700; box-shadow: 0 2px 6px rgba(0,0,0,0.5), inset 0 -2px 6px rgba(255,255,255,0.08); }
-.smeta { flex:1; font-size:13px; color:#bfecc3; }
-.smeta .name { display:block; font-weight:600; color:#eaffdf; }
-.smeta .percent { font-size:12px; color:#9fe1a3; opacity:0.9; }
-.bar { width:80px;height:8px;border-radius:6px;background:rgba(255,255,255,0.03); overflow:hidden; margin-left:8px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); }
-.bar > i { display:block;height:100%; background: linear-gradient(90deg,#9eff7b,#26e86a); }
-.center { flex:2; display:flex; flex-direction:column; align-items:center; gap:12px; overflow:hidden; }
-.camera-frame { flex:1; width:100%; border-radius:18px; background: linear-gradient(180deg, rgba(10,20,10,0.6), rgba(0,0,0,0.6)); display:flex; align-items:center; justify-content:center; position:relative; box-shadow: 0 12px 40px rgba(0,0,0,0.6); border: 3px solid rgba(64,255,115,0.06); overflow:hidden; }
-.camera-frame .neon-border { position:absolute; inset:8px; border-radius:12px; pointer-events:none; box-shadow: 0 0 40px rgba(46,255,120,0.08), 0 0 10px rgba(46,255,120,0.06), inset 0 0 30px rgba(46,255,120,0.03); border: 2px solid rgba(46,255,120,0.12); }
-.video-box { width:92%; height:92%; border-radius:10px; overflow:hidden; display:flex; align-items:center; justify-content:center; background: radial-gradient(ellipse at center, rgba(0,0,0,0.35), rgba(0,0,0,0.6)); position:relative; }
-.video-box iframe, .video-box img, .video-box video { width:100%; height:100%; object-fit:cover; border:0; }
-.right-panel { flex:0 0 300px; display:flex; flex-direction:column; gap:12px; }
-.student-sidebar { position:absolute; right:0; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:12px; padding:10px; }
-.student-num { background:rgba(64,255,115,0.1); color:#dfffe0; font-weight:700; text-align:center; border-radius:6px; padding:6px; }
-.controls { margin-top:12px; background: rgba(255,255,255,0.02); padding:12px; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:12px; border:1px solid rgba(64,255,115,0.04); }
-.btn { padding:10px 24px; border-radius:8px; border:0; cursor:pointer; color:#06220e; font-weight:700; letter-spacing:0.4px; box-shadow: 0 6px 18px rgba(0,0,0,0.45); transition: transform .12s, box-shadow .12s; }
-.btn:hover { transform: translateY(-3px); }
-.btn.stop { background:#0f8a4a; color:#eafaf0; }
-.btn.view { background:#0b6fb6; color:white; }
-.btn.start { background:#ffffff; color:#09210c; }
-.btn.random { background:#ff5050; color:white; }
-.chart-container { background: rgba(255,255,255,0.02); border-radius:12px; padding:12px; }
+/* ======= GENERAL ======= */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f9f9f9;
+    background-image: repeating-linear-gradient(45deg, #f9f9f9, #f9f9f9 10px, #f1f1f1 10px, #f1f1f1 20px);
+    color: #222;
+}
+.wrap {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+/* ======= TOP BAR ======= */
+.topbar {
+    background: #006b38;
+    color: white;
+    padding: 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    font-weight: 600;
+    border-bottom: 3px solid #004d28;
+}
+/* ======= MAIN LAYOUT ======= */
+.main {
+    flex: 1;
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+}
+.left-panel, .right-panel {
+    width: 22%;
+    background: #f4f4f4;
+    border-radius: 12px;
+    padding: 15px;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.center {
+    flex: 1;
+}
+/* ======= CAMERA AREA ======= */
+.camera-frame {
+    width: 100%;
+    height: 420px;
+    background: #eaeaea;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 2px solid #006b38;
+}
+.neon-border {
+    position: absolute;
+    inset: 0;
+    border: 3px solid #006b38;
+    filter: drop-shadow(0 0 6px #006b38);
+    pointer-events: none;
+    transition: 0.3s;
+}
+.video-box {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.controls {
+    margin-top: 12px;
+    display: flex;
+    justify-content: space-between;
+}
+.btn {
+    padding: 10px 15px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 32%;
+    border: none;
+    transition: 0.3s;
+}
+.btn:hover { transform: scale(1.05); }
+.btn.start { background: #27ae60; color: white; }
+.btn.stop { background: #e74c3c; color: white; }
+.btn.view { background: #1b263b; color: white; }
+/* ======= STUDENT LIST ======= */
+.student {
+    padding: 8px;
+    margin-bottom: 6px;
+    background: #ffffff;
+    border-radius: 6px;
+    border: 1px solid #c9c9c9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.student:hover { background: #dff0d8; transform: scale(1.01); }
+/* ======= SIDEBAR ======= */
+.student-sidebar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 200px;
+    height: 100%;
+    background: rgba(255,255,255,0.95);
+    padding: 15px;
+    color: #333;
+    border-left: 2px solid #006b38;
+    display: none;
+    box-shadow: -4px 0 8px rgba(0,0,0,0.1);
+    transition: 0.3s;
+}
+.card { background:#fff; padding:10px; border-radius:8px; margin-bottom:10px; box-shadow:0 3px 6px rgba(0,0,0,0.1); }
+
+#liveCam { width:100%; height:100%; object-fit:cover; display:none; }
+#startMsg { color:#333; }
 </style>
 </head>
 <body>
 <div class="wrap">
 <header class="topbar">
-<div class="brand">SMART FOCUS MONITORING SYSTEM</div>
-<div class="overall" id="overallText">OVERALL CLASS FOCUS: -- %</div>
-<div class="timer" id="sessionTimer">Session Timer: 00:00:00</div>
+    <div class="brand">Yarmouk University — Smart Focus Monitoring</div>
+    <div class="overall" id="overallText">OVERALL CLASS FOCUS: -- %</div>
+    <div class="timer" id="sessionTimer">Session Timer: 00:00:00</div>
 </header>
 <main class="main">
 <section class="left-panel">
-<h3>INDIVIDUAL STUDENT FOCUS</h3>
-<div id="studentsList"></div>
-<div class="chart-container">
-<canvas id="overallChart"></canvas>
-</div>
+    <h3>Individual Student Focus</h3>
+    <div id="studentsList"></div>
+    <div class="chart-container">
+        <canvas id="overallChart"></canvas>
+    </div>
 </section>
+
 <section class="center">
-<div class="camera-frame">
-<div class="neon-border"></div>
-<div class="video-box" id="videoBox">
-<p style="color:#bfecc3;">🎥 Click Start Monitoring to begin</p>
-</div>
-<div class="student-sidebar" id="studentSidebar"></div>
-</div>
-<div class="controls">
-<button class="btn stop" onclick="stopMonitoring()">STOP MONITORING</button>
-<button class="btn view" onclick="window.location.href='historical.html'">VIEW HISTORICAL DATA</button>
-<button class="btn start" onclick="startMonitoring()">START MONITORING</button>
-<button class="btn random" onclick="selectRandomStudent()">SELECT RANDOM STUDENT</button>
-</div>
+    <div class="camera-frame">
+        <div class="neon-border"></div>
+        <div class="video-box" id="videoBox">
+            <img id="liveCam" src="">
+            <p id="startMsg">🎥 Click Start Monitoring to begin</p>
+        </div>
+        <div class="student-sidebar" id="studentSidebar"></div>
+    </div>
+
+    <div class="controls">
+        <button class="btn stop" id="stopBtn">STOP MONITORING</button>
+        <button class="btn view" id="viewBtn">VIEW HISTORICAL DATA</button>
+        <button class="btn start" id="startBtn">START MONITORING</button>
+    </div>
 </section>
+
 <aside class="right-panel">
-<h3>AGGREGATE ANALYTICS</h3>
-<div class="mini-chart"></div>
-<div style="display:flex;justify-content:space-between;margin-bottom:10px;">
-<div style="font-weight:700;color:#dfffe0;">ATTENTION STATES</div>
-<div style="color:#9fe1a3;font-weight:700;" id="avgFocusRight">--%</div>
-</div>
-<div style="font-size:12px;color:#bfecc3;"> Most distracted period: <strong>10:15 - 10:20</strong><br/>
-Average focus: <strong id="avgFocusText">--%</strong>
-</div>
+    <h3>Aggregate Analytics</h3>
+    <div class="card">
+        <div style="font-weight:700;">Average Focus</div>
+        <div style="font-size:24px;color:#006b38;" id="avgFocusText">--%</div>
+    </div>
+    <div class="card">
+        <div style="font-weight:700;">Highest Focused Student</div>
+        <div id="topStudent">--</div>
+    </div>
+    <div class="card">
+        <div style="font-weight:700;">Lowest Focused Student</div>
+        <div id="lowStudent">--</div>
+    </div>
 </aside>
 </main>
 </div>
+
 <script>
+// ----- إعداد الواجهة -----
+const studentsListEl = document.getElementById('studentsList');
+const liveCam = document.getElementById('liveCam');
+const startMsg = document.getElementById('startMsg');
+const overallText = document.getElementById('overallText');
+const avgFocusText = document.getElementById('avgFocusText');
+const topStudentEl = document.getElementById('topStudent');
+const lowStudentEl = document.getElementById('lowStudent');
+
+let fetchIntervalID = null;
+let sessionSec = 0;
+let sessionTimerID = null;
+
+// بناء قائمة مؤقتة للطلاب (لو بدك تسحبي الأسماء من باك إند بعدين، غير الجزء هذا)
+const MAX_EXPECTED = 5; // نفس قيمة max_num_faces في Flask
+for (let i=0;i<MAX_EXPECTED;i++){
+    const div = document.createElement('div');
+    div.className = 'student';
+    div.id = `student-${i}`;
+    div.innerHTML = `<span class="name">Student ${i+1}</span><span class="focus" id="student-${i}-focus">--%</span>`;
+    div.onclick = ()=> {
+        // عرض تفاصيل جانبي
+        const sidebar = document.getElementById('studentSidebar');
+        const focusText = document.getElementById(`student-${i}-focus`).innerText;
+        sidebar.style.display = 'block';
+        sidebar.innerHTML = `<h4>Student ${i+1}</h4><p>Focus: ${focusText}</p>`;
+    }
+    studentsListEl.appendChild(div);
+}
+
+// Start / Stop handlers
+document.getElementById('startBtn').addEventListener('click', ()=> {
+    startMonitoring();
+});
+document.getElementById('stopBtn').addEventListener('click', ()=> {
+    stopMonitoring();
+});
+
 function startMonitoring(){
-document.getElementById('videoBox').innerHTML = "<iframe src='{{ url_for('video_feed') }}' frameborder='0' allow='camera' style='width:100%;height:100%;'></iframe>";
+    liveCam.style.display = 'block';
+    startMsg.style.display = 'none';
+    liveCam.src = '/video_feed';
+
+    // ابدأ fetch للـ focus-data كل 500ms
+    if (fetchIntervalID) clearInterval(fetchIntervalID);
+    fetchIntervalID = setInterval(fetchFocusData, 500);
+
+    // reset timer
+    if (sessionTimerID) clearInterval(sessionTimerID);
+    sessionSec = 0;
+    sessionTimerID = setInterval(()=> {
+        sessionSec++;
+        let h=String(Math.floor(sessionSec/3600)).padStart(2,"0"),
+            m=String(Math.floor((sessionSec%3600)/60)).padStart(2,"0"),
+            s=String(sessionSec%60).padStart(2,"0");
+        document.getElementById("sessionTimer").innerText=`Session Timer: ${h}:${m}:${s}`;
+    },1000);
 }
+
 function stopMonitoring(){
-document.getElementById('videoBox').innerHTML = "<p style='color:#bfecc3;'>🛑 Monitoring Stopped. Click 'Start Monitoring' to begin again.</p>";
+    liveCam.src = '';
+    liveCam.style.display = 'none';
+    startMsg.style.display = 'block';
+
+    if (fetchIntervalID) {
+        clearInterval(fetchIntervalID);
+        fetchIntervalID = null;
+    }
+    if (sessionTimerID) {
+        clearInterval(sessionTimerID);
+        sessionTimerID = null;
+    }
 }
 
-const studentsList = document.getElementById('studentsList');
-const studentSidebar = document.getElementById('studentSidebar');
+// جلب البيانات من الخادم
+async function fetchFocusData(){
+    try {
+        const res = await fetch('/focus-data', {cache: "no-store"});
+        if (!res.ok) return;
+        const payload = await res.json();
+        // payload: { students: [{id: <fid>, focus: <num>}, ...], overall: <num> }
+        // عرض الاجمالي
+        overallText.innerText = `OVERALL CLASS FOCUS: ${payload.overall}%`;
+        avgFocusText.innerText = `${payload.overall}%`;
 
-let students = [
-{name:"Student 1", pct:78},
-{name:"Student 2", pct:92},
-{name:"Student 3", pct:82},
-{name:"Student 4", pct:56},
-{name:"Student 5", pct:57}
-];
+        // تحديث كل طالب
+        // نحاول تصفير القيم أولاً إلى --% للطلاب الذين لم يكتشفوا بعد
+        for (let i=0;i<MAX_EXPECTED;i++){
+            const el = document.getElementById(`student-${i}-focus`);
+            if (el) el.innerText = `--%`;
+        }
 
-let selectedStudentIndex = null;
+        let top = {id:null, focus:-1}, low = {id:null, focus:101};
+        payload.students.forEach(s=>{
+            const el = document.getElementById(`student-${s.id}-focus`);
+            if (el) el.innerText = `${s.focus}%`;
+            if (s.focus > top.focus) top = {id: s.id, focus: s.focus};
+            if (s.focus < low.focus) low = {id: s.id, focus: s.focus};
+        });
 
-function renderStudents(){
-studentsList.innerHTML = "";
-studentSidebar.innerHTML = "";
-students.forEach((s, i) => {
-let borderColor = (selectedStudentIndex === i) ? 'red' : 'green';
-studentsList.innerHTML += `<div class="student" style="border:2px solid ${borderColor}; padding:8px; border-radius:8px;">
-<div class="avatar">${i+1}</div>
-<div class="smeta">
-<span class="name">${s.name}</span>
-<span class="percent">${s.pct}%</span>
-</div>
-<div class="bar"><i style="width:${s.pct}%"></i></div>
-</div>`;
-studentSidebar.innerHTML += `<div class="student-num">${i+1}<br/>${s.pct}%</div>`;
+        if (top.id !== null) topStudentEl.innerText = `Student ${top.id+1} (${top.focus}%)`;
+        else topStudentEl.innerText = '--';
+
+        if (low.id !== null) lowStudentEl.innerText = `Student ${low.id+1} (${low.focus}%)`;
+        else lowStudentEl.innerText = '--';
+    } catch (e) {
+        console.error("Error fetching focus-data:", e);
+    }
+}
+
+// رسم خط بسيط يحدّث عشوائياً (يمكن ربطه بالـ overall history إن أردت)
+const ctx=document.getElementById("overallChart");
+let chartData=[60,63,58,70,75];
+let chartLabels=["0","1","2","3","4"];
+const chart=new Chart(ctx,{
+    type:"line",
+    data:{
+        labels:chartLabels,
+        datasets:[{
+            label:"Overall Focus",
+            data:chartData,
+            borderWidth:2,
+            borderColor:"#006b38",
+            tension:0.3
+        }]
+    },
 });
-}
-
-function selectRandomStudent(){
-selectedStudentIndex = Math.floor(Math.random()*students.length);
-renderStudents();
-}
-
-renderStudents();
-
-function updateOverallSim(){
-const avg = Math.round(students.reduce((a,b)=>a+b.pct,0)/students.length);
-document.getElementById('overallText').innerText = `OVERALL CLASS FOCUS: ${avg}%`;
-document.getElementById('avgFocusText').innerText = `${avg}%`;
-document.getElementById('avgFocusRight').innerText = `${avg}%`;
-addChartData(avg);
-}
-updateOverallSim();
-setInterval(updateOverallSim, 5000);
-
-let startTime = Date.now();
-function tickTimer(){
-const s = Math.floor((Date.now()-startTime)/1000);
-const h = String(Math.floor(s/3600)).padStart(2,'0');
-const m = String(Math.floor((s%3600)/60)).padStart(2,'0');
-const sec = String(s%60).padStart(2,'0');
-document.getElementById('sessionTimer').innerText = `Session Timer: ${h}:${m}:${sec}`;
-}
-setInterval(tickTimer,1000);
-
-// --- Chart.js Real-time Chart ---
-const ctx = document.getElementById('overallChart').getContext('2d');
-const overallChart = new Chart(ctx, {
-type:'line',
-data:{
-labels: [],
-datasets:[{
-label:'Overall Focus',
-data: [],
-borderColor:'#26e86a',
-backgroundColor:'rgba(38,232,106,0.2)',
-fill:true,
-tension:0.3
-}]
-},
-options:{
-responsive:true,
-animation:false,
-scales:{
-y:{ min:0, max:100 }
-}
-}
-});
-function addChartData(value){
-const timeLabel = new Date().toLocaleTimeString();
-overallChart.data.labels.push(timeLabel);
-overallChart.data.datasets[0].data.push(value);
-if(overallChart.data.labels.length>20){
-overallChart.data.labels.shift();
-overallChart.data.datasets[0].data.shift();
-}
-overallChart.update();
-}
+setInterval(()=>{
+    // فقط لمظهر ديناميكي، لا يلغي fetch الحقيقي
+    const nextValue = Math.floor(Math.random()*41+60);
+    chart.data.labels.push(chart.data.labels.length);
+    chart.data.datasets[0].data.push(nextValue);
+    if(chart.data.labels.length>10){
+        chart.data.labels.shift();
+        chart.data.datasets[0].data.shift();
+    }
+    chart.update();
+},5000);
 </script>
 </body>
 </html>
-
-
-
