@@ -1,10 +1,11 @@
-from flask import Flask, render_template, Response
+from flask import Flask, render_template, Response, jsonify
 import cv2
 import mediapipe as mp
 import numpy as np
 import time
 import pygame
 import json
+import threading
 
 app = Flask(__name__)
 
@@ -17,11 +18,14 @@ alert_played = False
 mp_face_mesh = mp.solutions.face_mesh
 
 # --- بيانات التركيز ---
-focus_dict = {}
+focus_dict = {}      # key = fid (int), value = focus_percentage (float)
 closed_start = {}
 tilt_start = {}
 tilt_recovery = {}
-highlighted_student_id = None  # الطالب المختار عشوائياً
+highlighted_student_id = None
+
+# --- قفل لحماية الوصول المتزامن إلى focus_dict ---
+focus_lock = threading.Lock()
 
 # --- تايمر لمنع No Face سريع ---
 last_face_time = time.time()
@@ -59,18 +63,24 @@ def gen_frames():
                 x_min = min(xs)
                 faces_with_pos.append((x_min, fid, face_landmarks))
 
+            # ترتيب للعرض (اختياري)
             faces_with_pos.sort(key=lambda x: x[0], reverse=True)
 
             for idx, (x_min, fid, face_landmarks) in enumerate(faces_with_pos):
                 landmarks = face_landmarks.landmark
 
+                # تأكد وجود مفاتيح الافتراضية
                 if fid not in focus_dict:
-                    focus_dict[fid] = 100
+                    with focus_lock:
+                        focus_dict[fid] = 100.0
                     closed_start[fid] = None
                     tilt_start[fid] = None
                     tilt_recovery[fid] = False
 
-                focus = focus_dict[fid]
+                # اقرأ القيمة الحالية بأمان
+                with focus_lock:
+                    focus = focus_dict.get(fid, 100.0)
+
                 movement_detected = False
 
                 # --- العين ---
@@ -122,16 +132,20 @@ def gen_frames():
                         tilt_start[fid] = now
                         tilt_recovery[fid] = True
                 else:
-                    if tilt_recovery[fid]:
+                    if tilt_recovery.get(fid, False):
                         tilt_recovery[fid] = False
                         movement_detected = True
                     tilt_start[fid] = None
 
-                if not movement_detected and not tilt_recovery[fid] and focus < 100:
+                if not movement_detected and not tilt_recovery.get(fid, False) and focus < 100:
                     focus += 0.3
 
-                focus = max(0, min(100, focus))
-                focus_dict[fid] = focus
+                focus = max(0.0, min(100.0, focus))
+
+                # عدّل القيمة في القاموس بأمان
+                with focus_lock:
+                    focus_dict[fid] = focus
+
                 avg_focus += focus
                 face_count += 1
 
@@ -140,7 +154,7 @@ def gen_frames():
                 x_min, x_max = min(xs), max(xs)
                 y_min, y_max = min(ys), max(ys)
 
-                # --- تلوين المربع الأحمر إذا هو الطالب المختار ---
+                # رسم الصندوق والنسبة
                 box_color = (0,0,255) if fid == highlighted_student_id else (0,255,0)
                 cv2.rectangle(frame, (x_min-10, y_min-10), (x_max+10, y_max+10), box_color, 2)
                 color = (0, 255, 0) if focus > 70 else (0,255,255) if focus > 40 else (0,0,255)
@@ -173,14 +187,9 @@ def gen_frames():
         ret, buffer = cv2.imencode('.jpg', frame)
         frame_bytes = buffer.tobytes()
 
-        overlay_data = json.dumps({
-            "students":[{"id":i+1,"focus":focus_dict.get(i,100)} for i in range(5)],
-            "overall": round(avg_focus,1)
-        })
-
+        # لا تحتاج لإرسال overlay_data هنا لأن الواجهة ستجلبها من /focus-data
         yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n'
-               b'X-Overlay-Data: ' + overlay_data.encode() + b'\r\n\r\n' + frame_bytes + b'\r\n')
+               b'Content-Type: image/jpeg\r\n\r\n' + frame_bytes + b'\r\n')
 
 @app.route('/')
 def index():
@@ -191,12 +200,21 @@ def video_feed():
     return Response(gen_frames(),
                     mimetype='multipart/x-mixed-replace; boundary=frame')
 
+# --- endpoint لإرجاع نسب التركيز الحالية ---
+@app.route('/focus-data')
+def focus_data():
+    with focus_lock:
+        # حوّل القاموس إلى قائمة مرتبة لعرض (يمكن تغيير العدد حسب الحاجة)
+        students = [{"id": int(fid), "focus": round(float(focus_dict.get(fid, 100.0)), 1)} for fid in sorted(focus_dict.keys())]
+        overall = round(sum([s["focus"] for s in students]) / len(students), 1) if students else 100.0
+        return jsonify({"students": students, "overall": overall})
+
 @app.route('/highlight_random')
 def highlight_random():
     global highlighted_student_id
     if focus_dict:
         highlighted_student_id = np.random.choice(list(focus_dict.keys()))
-    return {"selected": highlighted_student_id}
+    return {"selected": int(highlighted_student_id) if highlighted_student_id is not None else None}
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, debug=True)
