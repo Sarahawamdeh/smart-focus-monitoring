@@ -10,24 +10,25 @@
       margin: 0;
       background-color: #f4f6f8;
       color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* يضمن أن الجسم كامل طول الشاشة */
     }
 
-    /* هيدر مع اللوقو */
     .header {
-     background-color: #0b6623;
-     color: white;
-     padding: 20px;
-     height: 70px;
+      background-color: #0b6623;
+      color: white;
+      padding: 20px;
+      height: 70px;
       font-size: 26px;
-     font-weight: 600;
-     position: relative;
-     box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-     display: flex;
-     justify-content: center;   /* يخلي النص بالنص */
-     align-items: center;       /* يخليه بالنص عامودياً */
-     text-align: center;
+      font-weight: 600;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
     }
-
 
     .header .logo {
       position: absolute;
@@ -37,10 +38,10 @@
       width: 55px;
       height: auto;
     }
-    /* النص دايماً بالنص وميتحركش */
+
     .header-title {
-      white-space: nowrap;          
-      overflow: hidden;             
+      white-space: nowrap;
+      overflow: hidden;
       text-overflow: ellipsis;
       width: 100%;
       text-align: center;
@@ -51,6 +52,7 @@
       padding: 30px;
       max-width: 1000px;
       margin: 0 auto;
+      flex-grow: 1; /* يوسع المحتوى لملء الفراغ */
     }
 
     h2 {
@@ -58,7 +60,6 @@
       margin-bottom: 20px;
     }
 
-    /* Course grid */
     .course-grid {
       display: flex;
       gap: 20px;
@@ -153,8 +154,18 @@
       background-color: #084e1b;
     }
 
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 12px 0;
+      color: #0b6623;
+      font-size: 14px;
+      background: none; /* بدون باكجراوند */
+      margin-top: 20px;
+    }
   </style>
 </head>
+
 <body>
 
   <div class="header">
@@ -191,6 +202,10 @@
 
     <a href="signin.html" class="back-btn">Back</a>
   </div>
+
+  <footer>
+    © 2025 Yarmouk University — Smart Student Focus Monitoring System
+  </footer>
 
 </body>
 </html>
