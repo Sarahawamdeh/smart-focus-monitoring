@@ -89,7 +89,7 @@
     }
 
     canvas {
-      max-width: 500px;
+      max-width: 650px;
       margin: 25px auto;
       display: block;
     }
@@ -112,6 +112,37 @@
       font-size: 13px;
     }
 
+    /* SESSION HEATMAP */
+    .heatmap { display: flex; gap: 8px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+    .heat-cell {
+      width: 50px;
+      height: 50px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: white;
+      font-size: 14px;
+    }
+
+    /* ALERTS */
+    .alerts {
+      margin-top: 30px;
+      background: #fff3cd;
+      border-left: 5px solid #ffeeba;
+      padding: 15px 20px;
+      border-radius: 8px;
+    }
+
+    .alerts h3 {
+      margin: 0 0 10px 0;
+      font-size: 18px;
+      color: #856404;
+    }
+
+    .alerts ul { margin: 0; padding-left: 20px; }
+
     /* TABLE */
     table {
       width: 100%;
@@ -126,11 +157,7 @@
       font-size: 16px;
     }
 
-    th {
-      background-color: #0b6623;
-      color: white;
-    }
-
+    th { background-color: #0b6623; color: white; }
     tr:hover { background-color: #e9f5ec; }
 
     /* Back Button */
@@ -157,7 +184,6 @@
       font-size: 14px;
       background-color: #f4f6f8;
     }
-
   </style>
 </head>
 
@@ -194,16 +220,26 @@
     <h2>Focus per 15-min Session</h2>
     <div class="session-bars" id="sessionBars"></div>
 
+    <!-- SESSION HEATMAP -->
+    <h2>Session Heatmap</h2>
+    <div class="heatmap" id="sessionHeatmap"></div>
+
+    <!-- ALERTS -->
+    <div class="alerts" id="alertsBox">
+      <h3>Alerts</h3>
+      <ul id="alertsList"></ul>
+    </div>
+
     <!-- STUDENT TABLE -->
     <table>
       <tr>
         <th>Student</th>
         <th>Focus %</th>
       </tr>
-      <tr><td>Ahmad</td><td class="focus-cell">82%</td></tr>
-      <tr><td>Sara</td><td class="focus-cell">76%</td></tr>
-      <tr><td>Omar</td><td class="focus-cell">68%</td></tr>
-      <tr><td>Hiba</td><td class="focus-cell">90%</td></tr>
+      <tr><td>Ahmad</td><td>82%</td></tr>
+      <tr><td>Sara</td><td>76%</td></tr>
+      <tr><td>Omar</td><td>68%</td></tr>
+      <tr><td>Hiba</td><td>90%</td></tr>
     </table>
 
     <a href="history.html" class="back-btn">⬅ Back</a>
@@ -239,7 +275,7 @@
       options: { plugins: { legend: { position: 'bottom' } } }
     });
 
-    // SESSION BARS DATA (مثال كل 15 دقيقة)
+    // SESSION BARS DATA
     const sessionData = [
       { time: "00:00 - 00:15", focus: 78 },
       { time: "00:15 - 00:30", focus: 85 },
@@ -247,6 +283,7 @@
       { time: "00:45 - 01:00", focus: 80 }
     ];
 
+    // RENDER SESSION BARS
     const sessionContainer = document.getElementById("sessionBars");
     sessionData.forEach(s => {
       const div = document.createElement("div");
@@ -256,11 +293,34 @@
         <div class="bar"><div class="bar-fill" style="width:0%">0%</div></div>
       `;
       sessionContainer.appendChild(div);
-
-      // Animate bar fill
       const fill = div.querySelector(".bar-fill");
       setTimeout(()=>{ fill.style.width = s.focus + "%"; fill.innerText = s.focus + "%"; }, 100);
     });
+
+    // SESSION HEATMAP
+    const heatmapContainer = document.getElementById("sessionHeatmap");
+    sessionData.forEach(s => {
+      const div = document.createElement("div");
+      div.className = "heat-cell";
+      // ألوان حسب مستوى التركيز
+      if(s.focus >= 85) div.style.background = "#0b6623";
+      else if(s.focus >= 75) div.style.background = "#5a9950";
+      else if(s.focus >= 65) div.style.background = "#a3c1a1";
+      else div.style.background = "#c3d6c7";
+      div.innerText = s.focus + "%";
+      heatmapContainer.appendChild(div);
+    });
+
+    // ALERTS (Sessions < 75%)
+    const alertsList = document.getElementById("alertsList");
+    sessionData.forEach(s => {
+      if(s.focus < 75){
+        const li = document.createElement("li");
+        li.innerText = `Low focus detected in session ${s.time} (${s.focus}%)`;
+        alertsList.appendChild(li);
+      }
+    });
+
   </script>
 </body>
 </html>
