@@ -6,85 +6,166 @@
   <title>Sign Up</title>
   <style>
     body {
+      margin: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(rgba(0, 86, 63, 0.8), rgba(0, 86, 63, 0.8)),
-                  url("https://upload.wikimedia.org/wikipedia/ar/4/4e/Yarmouk_University_Logo.png") no-repeat center center fixed;
-      background-size: 300px;
+      background: 
+        linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.25)),
+        url('info/YU.png') no-repeat center center fixed;
+      background-size: 350px;
+      background-color: #f3f4f6;
+    }
+
+    .header {
+      background-color: #0b6623;
       color: white;
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .header .logo {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 60px;
+      height: auto;
+    }
+
+    .container {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      margin: 0;
+      height: 80vh;
     }
 
-    .signup-container {
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 40px;
-      border-radius: 15px;
-      width: 380px;
+    .login-box {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 12px;
+      padding: 40px 45px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+      width: 370px;
       text-align: center;
-      backdrop-filter: blur(8px);
-      box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
 
-    h1 {
-      font-size: 24px;
+    .login-box h2 {
+      color: #0b6623;
       margin-bottom: 25px;
-      letter-spacing: 1px;
+      font-weight: 600;
     }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: none;
-      border-radius: 8px;
-      outline: none;
-      font-size: 14px;
-      background: rgba(255,255,255,0.9);
+    .input-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
       color: #333;
+      font-weight: 500;
+      margin-bottom: 5px;
     }
 
-    button {
+    .input-group input {
       width: 100%;
-      padding: 12px;
-      background-color: #00563F;
+      padding: 10px;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: #0b6623;
       color: white;
-      font-size: 16px;
+      padding: 12px;
       border: none;
       border-radius: 8px;
       cursor: pointer;
-      transition: 0.3s;
+      font-size: 16px;
       margin-top: 10px;
+      transition: background-color 0.3s;
     }
 
-    button:hover {
-      background-color: #007a56;
+    .btn:hover {
+      background-color: #084e1b;
     }
 
-    a {
-      color: #fff;
+    .switch {
+      margin-top: 18px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .switch a {
+      color: #0b6623;
       text-decoration: none;
-      font-size: 13px;
+      font-weight: 500;
     }
 
-    a:hover {
+    .switch a:hover {
       text-decoration: underline;
+    }
+    footer {
+     width: 100%;
+     text-align: center;
+     padding: 10px 0;
+     background: none;
+     color: #0b6623;
+     font-size: 14px;
+     margin-top: 25px;
     }
   </style>
 </head>
 <body>
-  <div class="signup-container">
-    <h1>Yarmouk University<br>Instructor Sign Up</h1>
-    <form method="POST" action="/signup">
-      <input type="text" name="fullname" placeholder="Full Name" required>
-      <input type="email" name="email" placeholder="University Email" required>
-      <input type="password" name="password" placeholder="Password" required>
-      <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-      <button type="submit">Create Account</button>
-    </form>
-    <p style="margin-top:15px;">Already have an account? <a href="signin.html">Sign In</a></p>
+
+  <div class="header">
+    <img src="info/YU.png" class="logo" alt="YU Logo">
+    Smart Student Focus Monitoring System
   </div>
+
+  <div class="container">
+    <div class="login-box">
+      <h2>Instructor Sign Up</h2>
+
+      <form action="/signup" method="POST">
+
+        <div class="input-group">
+          <label for="fullname">Full Name</label>
+          <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+        </div>
+
+        <div class="input-group">
+          <label for="email">University Email</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        </div>
+
+        <div class="input-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter password" required>
+        </div>
+
+        <div class="input-group">
+          <label for="confirm_password">Confirm Password</label>
+          <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm password" required>
+        </div>
+
+        <button type="submit" class="btn">Create Account</button>
+
+        <div class="switch">
+          Already have an account? <a href="signin.html">Sign In</a>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+  <footer>
+    © 2025 Yarmouk University — Smart Student Focus Monitoring System
+  </footer>
 </body>
 </html>
