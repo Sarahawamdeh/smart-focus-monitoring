@@ -1,242 +1,210 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lecture Details - Yarmouk University</title>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture Details - Yarmouk University</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-  <style>
-    body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      background-color: #eef2f0;
-      color: #333;
-    }
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: #ffffff;
+  color: #333;
+}
 
-    /* HEADER */
-    .header {
-      background-color: #0b6623;
-      color: white;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      position: relative;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
-    }
+/* HEADER */
+.header {
+  background-color: #0b6623;
+  color: white;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+.header img { height: 60px; margin-left: 15px; }
+.header-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
 
-    .header img {
-      height: 60px;
-      margin-left: 15px;
-    }
+/* MAIN CONTAINER */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
 
-    .header-title {
-      position: absolute;
-      left: 50%;
-      transform: translateX(-50%);
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
+h2 {
+  color: #0b6623;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
 
-    /* MAIN CONTAINER */
-    .container {
-      max-width: 1000px;
-      margin: 40px auto;
-      padding: 30px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    }
+/* TOP SECTION: Overall Focus + Students + Pie Chart */
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
 
-    h2 {
-      color: #0b6623;
-      text-align: center;
-      margin-bottom: 10px;
-      font-size: 24px;
-    }
+/* LEFT CARDS */
+.stats-box {
+  display: flex;
+  gap: 25px;
+}
 
-    /* STAT CARD */
-    .stats-box {
-      display: flex;
-      justify-content: center;
-      gap: 30px;
-      margin: 30px 0;
-      flex-wrap: wrap;
-    }
+/* EACH CARD */
+.card {
+  background: #f6faf7;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  border-left: 5px solid #0b6623;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  width: 180px;
+}
 
-    .card {
-      background: #f6faf7;
-      padding: 20px;
-      width: 250px;
-      border-radius: 12px;
-      text-align: center;
-      border-left: 5px solid #0b6623;
-      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
-    }
+.card h3 { margin: 0; color: #0b6623; font-size: 24px; }
+.card p { font-size: 40px; font-weight: 700; margin-top: 10px; color: #333; }
 
-    .card h3 { margin: 0; color: #0b6623; font-size: 20px; }
-    .card p { font-size: 34px; font-weight: 700; margin-top: 10px; color: #333; }
+/* PIE CHART */
+#focusPie {
+  width: 340px !important;
+  height: 340px !important;
+}
 
-    canvas {
-      max-width: 650px;
-      margin: 25px auto;
-      display: block;
-    }
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 35px;
+}
+th, td { padding: 14px; border-bottom: 1px solid #ddd; text-align: center; font-size: 16px; }
+th { background-color: #0b6623; color: white; }
+tr:hover { background-color: #e9f5ec; }
 
-    /* ALERTS */
-    .alerts {
-      margin-top: 30px;
-      background: #fff3cd;
-      border-left: 5px solid #ffeeba;
-      padding: 15px 20px;
-      border-radius: 8px;
-    }
+/* Back Button */
+.back-btn {
+  margin-top: 30px;
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #0b6623;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+}
+.back-btn:hover { background-color: #064817; }
 
-    .alerts h3 {
-      margin: 0 0 10px 0;
-      font-size: 18px;
-      color: #856404;
-    }
-
-    .alerts ul { margin: 0; padding-left: 20px; }
-
-    /* TABLE */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 35px;
-    }
-
-    th, td {
-      padding: 14px;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
-      font-size: 16px;
-    }
-
-    th { background-color: #0b6623; color: white; }
-    tr:hover { background-color: #e9f5ec; }
-
-    /* Back Button */
-    .back-btn {
-      margin-top: 30px;
-      display: inline-block;
-      padding: 12px 25px;
-      background-color: #0b6623;
-      color: white;
-      border-radius: 8px;
-      text-decoration: none;
-      font-size: 15px;
-      font-weight: 500;
-    }
-
-    .back-btn:hover { background-color: #064817; }
-
-    /* FOOTER */
-    .footer {
-      text-align: center;
-      padding: 18px;
-      margin-top: 40px;
-      color: #777;
-      font-size: 14px;
-      background-color: #f4f6f8;
-    }
-  </style>
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 18px;
+  margin-top: 40px;
+  color: #0b6623;
+  font-size: 14px;
+  background-color: #f4f6f8;
+}
+</style>
 </head>
 
 <body>
 
-  <!-- HEADER -->
-  <div class="header">
-    <img src="info/YU.png" alt="Yarmouk Logo">
-    <div class="header-title">Lecture Focus Details</div>
-  </div>
+<!-- HEADER -->
+<div class="header">
+  <img src="info/YU.png" alt="Yarmouk Logo">
+  <div class="header-title">Lecture Focus Details</div>
+</div>
 
-  <div class="container">
+<div class="container">
+  <h2 id="lecture-date">Lecture Date:</h2>
 
-    <h2 id="lecture-date">Lecture Date:</h2>
+  <!-- TOP SECTION -->
+  <div class="top-section">
 
-    <!-- SUMMARY CARDS -->
+    <!-- LEFT CARDS: Overall + Students -->
     <div class="stats-box">
       <div class="card">
         <h3>Overall Focus</h3>
         <p id="overallFocus">78%</p>
       </div>
+
       <div class="card">
         <h3>Students</h3>
         <p id="studentCount">5</p>
       </div>
     </div>
 
-    <!-- PIE CHART -->
-    <h2>Focus Distribution</h2>
+    <!-- RIGHT: Pie Chart -->
     <canvas id="focusPie"></canvas>
 
-    <!-- ALERTS -->
-    <div class="alerts" id="alertsBox">
-      <h3>Alerts</h3>
-      <ul id="alertsList"></ul>
-    </div>
-
-    <!-- STUDENT TABLE -->
-    <table>
-  <tr>
-    <th>Student</th>
-    <th>Focus %</th>
-  </tr>
-  <tr><td>Student 1</td><td>82%</td></tr>
-  <tr><td>Student 2</td><td>76%</td></tr>
-  <tr><td>Student 3</td><td>68%</td></tr>
-  <tr><td>Student 4</td><td>90%</td></tr>
-  <tr><td>Student 5</td><td>74%</td></tr>
-</table>
-
-    <a href="history.html" class="back-btn">⬅ Back</a>
   </div>
 
-  <div class="footer">
-    © 2025 Yarmouk University | Smart Student Focus Monitoring System
-  </div>
+  <!-- STUDENT TABLE -->
+  <table>
+    <tr>
+      <th>Student</th>
+      <th>Focus %</th>
+    </tr>
+    <tr><td>Student 1</td><td>82%</td></tr>
+    <tr><td>Student 2</td><td>76%</td></tr>
+    <tr><td>Student 3</td><td>68%</td></tr>
+    <tr><td>Student 4</td><td>90%</td></tr>
+    <tr><td>Student 5</td><td>74%</td></tr>
+  </table>
 
-  <script>
-    // GET DATE FROM URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const date = urlParams.get('date') || "Unknown";
-    document.getElementById("lecture-date").innerText = "Lecture Date: " + date;
+  <a href="history.html" class="back-btn">⬅ Back</a>
+</div>
 
-    // STUDENTS
-    const students = ["Ahmad", "Sara", "Omar", "Hiba"];
-    const focusLevels = [82, 76, 68, 90];
-    document.getElementById("studentCount").innerText = students.length;
+<div class="footer">
+  © 2025 Yarmouk University | Smart Student Focus Monitoring System
+</div>
 
-    // CALCULATE OVERALL FOCUS
-    const overall = Math.round(focusLevels.reduce((a,b)=>a+b,0) / focusLevels.length);
-    document.getElementById("overallFocus").innerText = overall + "%";
+<script>
+// GET DATE FROM URL
+const urlParams = new URLSearchParams(window.location.search);
+const date = urlParams.get('date') || "Unknown";
+document.getElementById("lecture-date").innerText = "Lecture Date: " + date;
 
-    // PIE CHART
-    new Chart(document.getElementById("focusPie"), {
-      type: "pie",
-      data: {
-        labels: ["Focused", "Not Focused"],
-        datasets: [{
-          data: [overall, 100 - overall],
-          backgroundColor: ["#0b6623", "#c3d6c7"]
-        }]
-      },
-      options: { plugins: { legend: { position: 'bottom' } } }
-    });
+// STUDENTS
+const students = ["Ahmad", "Sara", "Omar", "Hiba"];
+const focusLevels = [82, 76, 68, 90];
+document.getElementById("studentCount").innerText = students.length;
 
-    // ALERTS (students < 75%)
-    const alertsList = document.getElementById("alertsList");
-    focusLevels.forEach((level, i) => {
-      if(level < 75){
-        const li = document.createElement("li");
-        li.innerText = `${students[i]} has low focus (${level}%)`;
-        alertsList.appendChild(li);
-      }
-    });
-  </script>
+// CALCULATE OVERALL FOCUS
+const overall = Math.round(focusLevels.reduce((a,b)=>a+b,0) / focusLevels.length);
+document.getElementById("overallFocus").innerText = overall + "%";
+
+// PIE CHART WITH NEW ANIMATION
+new Chart(document.getElementById("focusPie"), {
+  type: "pie",
+  data: {
+    labels: ["Focused", "Not Focused"],
+    datasets: [{
+      data: [overall, 100 - overall],
+      backgroundColor: ["#0b6623", "#c3d6c7"]
+    }]
+  },
+  options: { 
+    animation: { duration: 2000, easing: 'easeOutQuart' },
+    plugins: { legend: { position: 'bottom' } } 
+  }
+});
+</script>
 
 </body>
 </html>
