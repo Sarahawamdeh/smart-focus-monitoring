@@ -2,35 +2,41 @@
 <html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Smart Focus Monitoring — Yarmouk University</title>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
 <style>
 /* ======= GENERAL ======= */
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    background-color: #f9f9f9;
-    background-image: repeating-linear-gradient(45deg, #f9f9f9, #f9f9f9 10px, #f1f1f1 10px, #f1f1f1 20px);
+    background: #f9f9f9;
+    background-image: repeating-linear-gradient(
+        45deg, #f9f9f9, #f9f9f9 10px,
+        #f1f1f1 10px, #f1f1f1 20px
+    );
     color: #222;
 }
+
 .wrap {
     display: flex;
     flex-direction: column;
     height: 100vh;
 }
+
 /* ======= TOP BAR ======= */
 .topbar {
     background: #006b38;
     color: white;
-    padding: 15px 25px;
+    padding: 12px 20px;
     display: flex;
     justify-content: space-between;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     border-bottom: 3px solid #004d28;
 }
+
 /* ======= MAIN LAYOUT ======= */
 .main {
     flex: 1;
@@ -38,17 +44,21 @@ body {
     padding: 10px;
     gap: 10px;
 }
-.left-panel, .right-panel {
+
+.left-panel,
+.right-panel {
     width: 22%;
     background: #f4f4f4;
     border-radius: 12px;
-    padding: 15px;
+    padding: 12px;
     overflow-y: auto;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+
 .center {
     flex: 1;
 }
+
 /* ======= CAMERA AREA ======= */
 .camera-frame {
     width: 100%;
@@ -59,6 +69,7 @@ body {
     border-radius: 12px;
     border: 2px solid #006b38;
 }
+
 .neon-border {
     position: absolute;
     inset: 0;
@@ -67,6 +78,7 @@ body {
     pointer-events: none;
     transition: 0.3s;
 }
+
 .video-box {
     position: absolute;
     inset: 0;
@@ -74,36 +86,89 @@ body {
     align-items: center;
     justify-content: center;
 }
+
 .controls {
-    margin-top: 12px;
+    margin-top: 10px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start; 
+    gap: 10px; /* زيادة المسافة بين الأزرار */
+    flex-wrap: wrap; 
 }
+
+
 .btn {
-    padding: 10px 15px;
-    border-radius: 6px;
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 5px;
     font-weight: 600;
     cursor: pointer;
-    width: 32%;
     border: none;
     transition: 0.3s;
+    font-size: 14px;
+    background-color: #0b6623;
+    color: white;
+    text-align: center;
 }
-.btn:hover { transform: scale(1.05); }
-.btn.start { background: #27ae60; color: white; }
-.btn.stop { background: #e74c3c; color: white; }
-.btn.view { background: #1b263b; color: white; }
+
+.btn:hover {
+    background-color: #064817;
+    transform: scale(1.05);
+}
+
+/* إزالة أي لون سابق محدد للـ start/stop/view */
+.btn.start, .btn.stop, .btn.view {
+    background-color: #0b6623;
+    color: white;
+}
+
+/* ======= SHOW DETAILS BUTTON ======= */
+.show-details-btn {
+    margin: 15px auto 0;
+    display: none; /* مخفي بالبداية */
+    padding: 8px 20px; /* حجم أصغر */
+    background: linear-gradient(135deg, #007a3d, #004d28);
+    color: #fff;
+    font-weight: 600;
+    font-size: 13px; /* أصغر */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.3s ease;
+    display: block;
+}
+
+.show-details-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    background: linear-gradient(135deg, #00914d, #006b38);
+}
+
+.show-details-btn:active {
+    transform: translateY(0px) scale(0.97);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+
+
 /* ======= STUDENT LIST ======= */
 .student {
-    padding: 8px;
-    margin-bottom: 6px;
-    background: #ffffff;
-    border-radius: 6px;
+    padding: 6px;
+    margin-bottom: 5px;
+    background: #fff;
+    border-radius: 5px;
     border: 1px solid #c9c9c9;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 14px;
 }
-.student:hover { background: #dff0d8; transform: scale(1.01); }
+
+.student:hover {
+    background: #dff0d8;
+    transform: scale(1.01);
+}
+
 /* ======= SIDEBAR ======= */
 .student-sidebar {
     position: absolute;
@@ -119,124 +184,208 @@ body {
     box-shadow: -4px 0 8px rgba(0,0,0,0.1);
     transition: 0.3s;
 }
-.card { background:#fff; padding:10px; border-radius:8px; margin-bottom:10px; box-shadow:0 3px 6px rgba(0,0,0,0.1); }
 
-#liveCam { width:100%; height:100%; object-fit:cover; display:none; }
-#startMsg { color:#333; }
+.card {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    font-size: 14px;
+}
+
+#liveCam {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+#startMsg {
+    color: #333;
+}
+
+/* ===== RANDOM QUESTION MODAL ===== */
+#questionModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    width: 300px;
+    text-align: center;
+}
+
+#questionText {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
 </style>
 </head>
 <body>
 <div class="wrap">
+
 <header class="topbar">
     <div class="brand">Yarmouk University — Smart Focus Monitoring</div>
     <div class="overall" id="overallText">OVERALL CLASS FOCUS: -- %</div>
     <div class="timer" id="sessionTimer">Session Timer: 00:00:00</div>
 </header>
+
 <main class="main">
+
 <section class="left-panel">
     <h3>Individual Student Focus</h3>
     <div id="studentsList"></div>
-    <div class="chart-container">
-        <canvas id="overallChart"></canvas>
-    </div>
 </section>
 
 <section class="center">
+
     <div class="camera-frame">
         <div class="neon-border"></div>
+
         <div class="video-box" id="videoBox">
             <img id="liveCam" src="">
             <p id="startMsg">🎥 Click Start Monitoring to begin</p>
         </div>
+
         <div class="student-sidebar" id="studentSidebar"></div>
     </div>
 
     <div class="controls">
-        <button class="btn stop" id="stopBtn">STOP MONITORING</button>
-        <button class="btn view" id="viewBtn">VIEW HISTORICAL DATA</button>
+        <button class="btn stop"  id="stopBtn">STOP AND SAVE</button>
         <button class="btn start" id="startBtn">START MONITORING</button>
+        <button class="btn start" id="highlightBtn">RANDOM STUDENT</button>
+        <button class="btn view"  id="randomQuestionBtn">RANDOM QUESTION</button>
     </div>
+
+    <!-- SHOW DETAILS BUTTON -->
+<button class="show-details-btn" onclick="window.location.href='lecture-details.html'">SHOW DETAILS</button>
+
 </section>
 
 <aside class="right-panel">
     <h3>Aggregate Analytics</h3>
+
     <div class="card">
         <div style="font-weight:700;">Average Focus</div>
         <div style="font-size:24px;color:#006b38;" id="avgFocusText">--%</div>
+        <div style="font-size:12px;color:#888;">Live Average</div>
     </div>
+
     <div class="card">
         <div style="font-weight:700;">Highest Focused Student</div>
         <div id="topStudent">--</div>
     </div>
+
     <div class="card">
         <div style="font-weight:700;">Lowest Focused Student</div>
         <div id="lowStudent">--</div>
     </div>
 </aside>
+
 </main>
 </div>
 
+<!-- RANDOM QUESTION MODAL -->
+<div id="questionModal">
+    <p id="questionText"></p>
+    <button id="closeQuestionBtn" class="btn view">CLOSE</button>
+</div>
+
 <script>
-// ----- إعداد الواجهة -----
-const studentsListEl = document.getElementById('studentsList');
-const liveCam = document.getElementById('liveCam');
-const startMsg = document.getElementById('startMsg');
-const overallText = document.getElementById('overallText');
-const avgFocusText = document.getElementById('avgFocusText');
-const topStudentEl = document.getElementById('topStudent');
-const lowStudentEl = document.getElementById('lowStudent');
+// --- VARIABLES ---
+const studentsListEl   = document.getElementById('studentsList');
+const liveCam          = document.getElementById('liveCam');
+const startMsg         = document.getElementById('startMsg');
+const overallText      = document.getElementById('overallText');
+const avgFocusText     = document.getElementById('avgFocusText');
+const topStudentEl     = document.getElementById('topStudent');
+const lowStudentEl     = document.getElementById('lowStudent');
+const highlightBtn     = document.getElementById('highlightBtn');
+const randomQuestionBtn= document.getElementById('randomQuestionBtn');
+const questionModal    = document.getElementById('questionModal');
+const questionText     = document.getElementById('questionText');
+const closeQuestionBtn = document.getElementById('closeQuestionBtn');
+const showDetailsBtn   = document.querySelector('.show-details-btn');
 
 let fetchIntervalID = null;
 let sessionSec = 0;
 let sessionTimerID = null;
+let monitoringStarted = false; // متغير جديد لتتبع حالة المونيتورينغ
+let highlightedStudentId = null;
 
-// بناء قائمة مؤقتة للطلاب (لو بدك تسحبي الأسماء من باك إند بعدين، غير الجزء هذا)
-const MAX_EXPECTED = 5; // نفس قيمة max_num_faces في Flask
-for (let i=0;i<MAX_EXPECTED;i++){
+// --- BUILD STUDENTS LIST ---
+const MAX_EXPECTED = 5;
+for (let i = 0; i < MAX_EXPECTED; i++) {
     const div = document.createElement('div');
     div.className = 'student';
     div.id = `student-${i}`;
-    div.innerHTML = `<span class="name">Student ${i+1}</span><span class="focus" id="student-${i}-focus">--%</span>`;
-    div.onclick = ()=> {
-        // عرض تفاصيل جانبي
+    div.innerHTML = `
+        <span class="name">Student ${i + 1}</span>
+        <span class="focus" id="student-${i}-focus">--%</span>
+    `;
+    div.onclick = () => {
         const sidebar = document.getElementById('studentSidebar');
         const focusText = document.getElementById(`student-${i}-focus`).innerText;
         sidebar.style.display = 'block';
-        sidebar.innerHTML = `<h4>Student ${i+1}</h4><p>Focus: ${focusText}</p>`;
-    }
+        sidebar.innerHTML = `<h4>Student ${i + 1}</h4><p>Focus: ${focusText}</p>`;
+    };
     studentsListEl.appendChild(div);
 }
 
-// Start / Stop handlers
-document.getElementById('startBtn').addEventListener('click', ()=> {
-    startMonitoring();
+// --- START / STOP ---
+document.getElementById('startBtn').addEventListener('click', startMonitoring);
+document.getElementById('stopBtn').addEventListener('click', stopMonitoring);
+
+// --- RANDOM STUDENT ---
+highlightBtn.addEventListener('click', async () => {
+    if (!monitoringStarted) {
+        alert("⚠ Please start monitoring first!");
+        return;
+    }
+    try {
+        const res = await fetch('/highlight_random');
+        if (!res.ok) return;
+        const payload = await res.json();
+        highlightedStudentId = payload.selected;
+    } catch (e) {
+        console.error(e);
+    }
 });
-document.getElementById('stopBtn').addEventListener('click', ()=> {
-    stopMonitoring();
+
+// --- RANDOM QUESTION ---
+const questions = [
+    "What was the last topic we talked about in the lecture?",
+    "What does 'cloud storage' mean?",
+    "What is the capital of Jordan?",
+    "What is the name of the course and its code?",
+    "Define IP address.",
+    "What does HTML stand for?",
+    "Explain TCP vs UDP.",
+    "What does URL stand for?",
+    "What is a variable?"
+];
+
+randomQuestionBtn.addEventListener('click', () => {
+    if (!monitoringStarted) {
+        alert("⚠ Please start monitoring first!");
+        return;
+    }
+    const q = questions[Math.floor(Math.random() * questions.length)];
+    questionText.innerText = q;
+    questionModal.style.display = 'block';
 });
 
-function startMonitoring(){
-    liveCam.style.display = 'block';
-    startMsg.style.display = 'none';
-    liveCam.src = '/video_feed';
+closeQuestionBtn.addEventListener('click', () => {
+    questionModal.style.display = 'none';
+});
 
-    // ابدأ fetch للـ focus-data كل 500ms
-    if (fetchIntervalID) clearInterval(fetchIntervalID);
-    fetchIntervalID = setInterval(fetchFocusData, 500);
-
-    // reset timer
-    if (sessionTimerID) clearInterval(sessionTimerID);
-    sessionSec = 0;
-    sessionTimerID = setInterval(()=> {
-        sessionSec++;
-        let h=String(Math.floor(sessionSec/3600)).padStart(2,"0"),
-            m=String(Math.floor((sessionSec%3600)/60)).padStart(2,"0"),
-            s=String(sessionSec%60).padStart(2,"0");
-        document.getElementById("sessionTimer").innerText=`Session Timer: ${h}:${m}:${s}`;
-    },1000);
-}
-
-function stopMonitoring(){
+function stopMonitoring() {
     liveCam.src = '';
     liveCam.style.display = 'none';
     startMsg.style.display = 'block';
@@ -245,76 +394,73 @@ function stopMonitoring(){
         clearInterval(fetchIntervalID);
         fetchIntervalID = null;
     }
+
     if (sessionTimerID) {
         clearInterval(sessionTimerID);
         sessionTimerID = null;
     }
+
+    monitoringStarted = false; // إعادة ضبط الحالة عند الإيقاف
+    showDetailsBtn.style.display = 'block';
 }
 
-// جلب البيانات من الخادم
-async function fetchFocusData(){
+function startMonitoring() {
+    liveCam.style.display = 'block';
+    startMsg.style.display = 'none';
+    liveCam.src = '/video_feed';
+
+    if (fetchIntervalID) clearInterval(fetchIntervalID);
+    fetchIntervalID = setInterval(fetchFocusData, 500);
+
+    if (sessionTimerID) clearInterval(sessionTimerID);
+    sessionSec = 0;
+
+    document.getElementById("sessionTimer").innerText = "Session Timer: 00:00:00";
+
+    sessionTimerID = setInterval(() => {
+        sessionSec++;
+        let h = String(Math.floor(sessionSec / 3600)).padStart(2, "0"),
+            m = String(Math.floor((sessionSec % 3600) / 60)).padStart(2, "0"),
+            s = String(sessionSec % 60).padStart(2, "0");
+
+        document.getElementById("sessionTimer").innerText =
+            `Session Timer: ${h}:${m}:${s}`;
+    }, 1000);
+
+    monitoringStarted = true; // تشغيل الحالة عند الضغط على START
+    showDetailsBtn.style.display = 'none';
+}
+
+// --- FETCH FOCUS DATA ---
+async function fetchFocusData() {
     try {
-        const res = await fetch('/focus-data', {cache: "no-store"});
+        const res = await fetch('/focus-data', { cache: "no-store" });
         if (!res.ok) return;
         const payload = await res.json();
-        // payload: { students: [{id: <fid>, focus: <num>}, ...], overall: <num> }
-        // عرض الاجمالي
+
         overallText.innerText = `OVERALL CLASS FOCUS: ${payload.overall}%`;
         avgFocusText.innerText = `${payload.overall}%`;
 
-        // تحديث كل طالب
-        // نحاول تصفير القيم أولاً إلى --% للطلاب الذين لم يكتشفوا بعد
-        for (let i=0;i<MAX_EXPECTED;i++){
+        for (let i = 0; i < MAX_EXPECTED; i++) {
             const el = document.getElementById(`student-${i}-focus`);
-            if (el) el.innerText = `--%`;
+            if (el) el.innerText = '--%';
         }
 
-        let top = {id:null, focus:-1}, low = {id:null, focus:101};
-        payload.students.forEach(s=>{
+        let top = { id: null, focus: -1 };
+        let low = { id: null, focus: 101 };
+
+        payload.students.forEach(s => {
             const el = document.getElementById(`student-${s.id}-focus`);
             if (el) el.innerText = `${s.focus}%`;
-            if (s.focus > top.focus) top = {id: s.id, focus: s.focus};
-            if (s.focus < low.focus) low = {id: s.id, focus: s.focus};
+            if (s.focus > top.focus) top = { id: s.id, focus: s.focus };
+            if (s.focus < low.focus) low = { id: s.id, focus: s.focus };
         });
 
-        if (top.id !== null) topStudentEl.innerText = `Student ${top.id+1} (${top.focus}%)`;
-        else topStudentEl.innerText = '--';
+        topStudentEl.innerText = top.id !== null ? `Student ${top.id + 1} (${top.focus}%)` : '--';
+        lowStudentEl.innerText = low.id !== null ? `Student ${low.id + 1} (${low.focus}%)` : '--';
 
-        if (low.id !== null) lowStudentEl.innerText = `Student ${low.id+1} (${low.focus}%)`;
-        else lowStudentEl.innerText = '--';
     } catch (e) {
-        console.error("Error fetching focus-data:", e);
+        console.error("Error fetching focus-data:", e)
     }
 }
-
-// رسم خط بسيط يحدّث عشوائياً (يمكن ربطه بالـ overall history إن أردت)
-const ctx=document.getElementById("overallChart");
-let chartData=[60,63,58,70,75];
-let chartLabels=["0","1","2","3","4"];
-const chart=new Chart(ctx,{
-    type:"line",
-    data:{
-        labels:chartLabels,
-        datasets:[{
-            label:"Overall Focus",
-            data:chartData,
-            borderWidth:2,
-            borderColor:"#006b38",
-            tension:0.3
-        }]
-    },
-});
-setInterval(()=>{
-    // فقط لمظهر ديناميكي، لا يلغي fetch الحقيقي
-    const nextValue = Math.floor(Math.random()*41+60);
-    chart.data.labels.push(chart.data.labels.length);
-    chart.data.datasets[0].data.push(nextValue);
-    if(chart.data.labels.length>10){
-        chart.data.labels.shift();
-        chart.data.datasets[0].data.shift();
-    }
-    chart.update();
-},5000);
 </script>
-</body>
-</html>
