@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>courses</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background-color: #f4f6f8;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* يضمن أن الجسم كامل طول الشاشة */
+    }
+
+    .header {
+      background-color: #0b6623;
+      color: white;
+      padding: 20px;
+      height: 70px;
+      font-size: 26px;
+      font-weight: 600;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .header .logo {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 55px;
+      height: auto;
+    }
+
+    .header-title {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    .container {
+      padding: 30px;
+      max-width: 1000px;
+      margin: 0 auto;
+      flex-grow: 1; /* يوسع المحتوى لملء الفراغ */
+    }
+
+    h2 {
+      color: #0b6623;
+      margin-bottom: 20px;
+    }
+
+    .course-grid {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .course-card {
+      background-color: white;
+      border-radius: 12px;
+      padding: 25px 20px;
+      flex: 1 1 250px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s, box-shadow 0.3s;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .course-card:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      z-index: 2;
+    }
+
+    .course-card h3 {
+      margin: 0 0 10px 0;
+      color: #0b6623;
+      font-size: 20px;
+    }
+
+    .course-card p {
+      font-size: 14px;
+      color: #555;
+      margin-bottom: 15px;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      transition: background-color 0.3s, opacity 0.4s, transform 0.4s;
+      opacity: 0;
+      transform: translateY(15px);
+      pointer-events: none;
+    }
+
+    .course-card:hover .btn {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: all;
+    }
+
+    .monitor-btn {
+      background-color: #0b6623;
+    }
+
+    .monitor-btn:hover {
+      background-color: #084e1b;
+    }
+
+    .history-btn {
+      background-color: #0b6623;
+    }
+
+    .history-btn:hover {
+      background-color: #084e1b;
+    }
+
+    .back-btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 12px 25px;
+      background-color: #0b6623;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .back-btn:hover {
+      background-color: #084e1b;
+    }
+
+    footer {
+      width: 100%;
+      text-align: center;
+      padding: 12px 0;
+      color: #0b6623;
+      font-size: 14px;
+      background: none; /* بدون باكجراوند */
+      margin-top: 20px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="header">
+    <img src="info/YU.png" class="logo" alt="YU Logo">
+    <span class="header-title">Yarmouk University - Instructor Courses</span>
+  </div>
+
+  <div class="container">
+    <h2>Welcome, Dr. [Instructor Name]</h2>
+    <p>Here are the courses you currently manage:</p>
+
+    <div class="course-grid">
+      <div class="course-card">
+        <h3>Python</h3>
+        <p>Course Code: CS111</p>
+        <a href="index.html" class="btn monitor-btn">Start Monitoring</a>
+        <a href="history.html" class="btn history-btn">Historical Data</a>
+      </div>
+
+      <div class="course-card">
+        <h3>Lab Python</h3>
+        <p>Course Code: CS111L</p>
+        <a href="index.html" class="btn monitor-btn">Start Monitoring</a>
+        <a href="history.html" class="btn history-btn">Historical Data</a>
+      </div>
+
+      <div class="course-card">
+        <h3>Network</h3>
+        <p>Course Code: CS332</p>
+        <a href="index.html" class="btn monitor-btn">Start Monitoring</a>
+        <a href="history.html" class="btn history-btn">Historical Data</a>
+      </div>
+    </div>
+
+    <a href="signin.html" class="back-btn">Back</a>
+  </div>
+
+  <footer>
+    © 2025 Yarmouk University — Smart Student Focus Monitoring System
+  </footer>
+
+</body>
+</html>
