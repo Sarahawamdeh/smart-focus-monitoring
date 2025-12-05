@@ -55,6 +55,15 @@ body {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
+.left-panel h4, 
+.right-panel h4 {
+    color: #000301;
+    margin-top: 0;
+    margin-bottom: 5px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+}
+
 .center {
     flex: 1;
 }
@@ -220,6 +229,18 @@ body {
     font-weight: 600;
     margin-bottom: 10px;
 }
+#courseName {
+    font-weight: 700;   /* غامق شوية */
+    font-size: 34px;    /* أكبر من السكشن */
+    color: #000b06;     /* لون الجامعة */
+}
+
+#sectionName {
+    font-weight: 600;   /* أخف من الكورس */
+    font-size: 22px;    /* أصغر من الكورس */
+    color: rgb(0, 7, 4);     /* أغمق قليلًا */
+}
+
 </style>
 </head>
 <body>
@@ -234,6 +255,11 @@ body {
 <main class="main">
 
 <section class="left-panel">
+    <h4>
+        <span id="courseName">python</span><br>
+        <span id="sectionName">Section 1</span>
+    </h4>
+
     <h3>Individual Student Focus</h3>
     <div id="studentsList"></div>
 </section>
@@ -252,18 +278,18 @@ body {
     </div>
 
     <div class="controls">
-        <button class="btn stop"  id="stopBtn">STOP AND SAVE</button>
+        <button class="btn stop" id="stopBtn">STOP AND SAVE</button>
         <button class="btn start" id="startBtn">START MONITORING</button>
         <button class="btn start" id="highlightBtn">RANDOM STUDENT</button>
-        <button class="btn view"  id="randomQuestionBtn">RANDOM QUESTION</button>
+        <button class="btn view" id="randomQuestionBtn">RANDOM QUESTION</button>
     </div>
 
-    <!-- SHOW DETAILS BUTTON -->
     <button class="show-details-btn" onclick="window.location.href='last_p.html'">SHOW DETAILS</button>
 
 </section>
 
 <aside class="right-panel">
+    <h4>Date: <span id="dateInfo">-- / -- / ----</span></h4>
     <h3>Aggregate Analytics</h3>
 
     <div class="card">
@@ -286,7 +312,6 @@ body {
 </main>
 </div>
 
-<!-- RANDOM QUESTION MODAL -->
 <div id="questionModal">
     <p id="questionText"></p>
     <button id="closeQuestionBtn" class="btn view">CLOSE</button>
@@ -294,19 +319,20 @@ body {
 
 <script>
 // --- VARIABLES ---
-const studentsListEl   = document.getElementById('studentsList');
-const liveCam          = document.getElementById('liveCam');
-const startMsg         = document.getElementById('startMsg');
-const overallText      = document.getElementById('overallText');
-const avgFocusText     = document.getElementById('avgFocusText');
-const topStudentEl     = document.getElementById('topStudent');
-const lowStudentEl     = document.getElementById('lowStudent');
-const highlightBtn     = document.getElementById('highlightBtn');
-const randomQuestionBtn= document.getElementById('randomQuestionBtn');
-const questionModal    = document.getElementById('questionModal');
-const questionText     = document.getElementById('questionText');
-const closeQuestionBtn = document.getElementById('closeQuestionBtn');
-const showDetailsBtn   = document.querySelector('.show-details-btn');
+const studentsListEl    = document.getElementById('studentsList');
+const liveCam           = document.getElementById('liveCam');
+const startMsg          = document.getElementById('startMsg');
+const overallText       = document.getElementById('overallText');
+const avgFocusText      = document.getElementById('avgFocusText');
+const topStudentEl      = document.getElementById('topStudent');
+const lowStudentEl      = document.getElementById('lowStudent');
+const highlightBtn      = document.getElementById('highlightBtn');
+const randomQuestionBtn = document.getElementById('randomQuestionBtn');
+const questionModal     = document.getElementById('questionModal');
+const questionText      = document.getElementById('questionText');
+const closeQuestionBtn  = document.getElementById('closeQuestionBtn');
+const showDetailsBtn    = document.querySelector('.show-details-btn');
+const dateInfoEl        = document.getElementById('dateInfo');
 
 let fetchIntervalID = null;
 let sessionSec = 0;
@@ -409,7 +435,6 @@ function startMonitoring() {
 
     if (sessionTimerID) clearInterval(sessionTimerID);
     sessionSec = 0;
-
     document.getElementById("sessionTimer").innerText = "Session Timer: 00:00:00";
 
     sessionTimerID = setInterval(() => {
@@ -458,6 +483,17 @@ async function fetchFocusData() {
         console.error("Error fetching focus-data:", e)
     }
 }
+
+// --- UPDATE DATE ---
+function updateDateTime() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = now.toLocaleDateString('ar-JO', options);
+    dateInfoEl.textContent = formattedDate;
+}
+
+// --- INIT ---
+updateDateTime();
 </script>
 </body>
 </html>
