@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture Details - Yarmouk University</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: #ffffff;
+  color: #333;
+}
+
+/* HEADER */
+.header {
+  background-color: #0b6623;
+  color: white;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+.header img { height: 60px; margin-left: 15px; }
+.header-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: #0b6623;
+  text-align: center;
+  margin-bottom: 10px;
+  font-size: 24px;
+}
+
+/* TOP SECTION: Overall Focus + Students + Pie Chart */
+.top-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+/* LEFT CARDS */
+.stats-box {
+  display: flex;
+  gap: 25px;
+}
+
+/* EACH CARD */
+.card {
+  background: #f6faf7;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  border-left: 5px solid #0b6623;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  width: 180px;
+}
+
+.card h3 { margin: 0; color: #0b6623; font-size: 24px; }
+.card p { font-size: 40px; font-weight: 700; margin-top: 10px; color: #333; }
+
+/* PIE CHART */
+#focusPie {
+  width: 340px !important;
+  height: 340px !important;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 35px;
+}
+th, td { padding: 14px; border-bottom: 1px solid #ddd; text-align: center; font-size: 16px; }
+th { background-color: #0b6623; color: white; }
+tr:hover { background-color: #e9f5ec; }
+
+/* Back Button */
+.back-btn {
+  margin-top: 30px;
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #0b6623;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+  font-size: 15px;
+  font-weight: 500;
+}
+.back-btn:hover { background-color: #064817; }
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 18px;
+  margin-top: 40px;
+  color: #0b6623;
+  font-size: 14px;
+  background-color: #f4f6f8;
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <img src="info/YU.png" alt="Yarmouk Logo">
+  <div class="header-title">Lecture Focus Details</div>
+</div>
+
+<div class="container">
+  <h2 id="lecture-date">Lecture Date:</h2>
+
+  <!-- TOP SECTION -->
+  <div class="top-section">
+
+    <!-- LEFT CARDS: Overall + Students -->
+    <div class="stats-box">
+      <div class="card">
+        <h3>Overall Focus</h3>
+        <p id="overallFocus">78%</p>
+      </div>
+
+      <div class="card">
+        <h3>Students</h3>
+        <p id="studentCount">5</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: Pie Chart -->
+    <canvas id="focusPie"></canvas>
+
+  </div>
+
+  <!-- STUDENT TABLE -->
+  <table>
+    <tr>
+      <th>Student</th>
+      <th>Focus %</th>
+    </tr>
+    <tr><td>Student 1</td><td>82%</td></tr>
+    <tr><td>Student 2</td><td>76%</td></tr>
+    <tr><td>Student 3</td><td>68%</td></tr>
+    <tr><td>Student 4</td><td>90%</td></tr>
+    <tr><td>Student 5</td><td>74%</td></tr>
+  </table>
+
+  <!-- Back Button باستخدام Flask -->
+  <a href="{{ url_for('history') }}" class="back-btn">⬅ Back</a>
+</div>
+
+<div class="footer">
+  ©️ 2025 Yarmouk University | Smart Student Focus Monitoring System
+</div>
+
+<script>
+// GET DATE FROM URL
+const urlParams = new URLSearchParams(window.location.search);
+const date = urlParams.get('date') || "Unknown";
+document.getElementById("lecture-date").innerText = "Lecture Date: " + date;
+
+// STUDENTS
+const students = ["Ahmad", "Sara", "Omar", "Hiba"];
+const focusLevels = [82, 76, 68, 90];
+document.getElementById("studentCount").innerText = students.length;
+
+// CALCULATE OVERALL FOCUS
+const overall = Math.round(focusLevels.reduce((a,b)=>a+b,0) / focusLevels.length);
+document.getElementById("overallFocus").innerText = overall + "%";
+
+// PIE CHART
+new Chart(document.getElementById("focusPie"), {
+  type: "pie",
+  data: {
+    labels: ["Focused", "Not Focused"],
+    datasets: [{
+      data: [overall, 100 - overall],
+      backgroundColor: ["#0b6623", "#c3d6c7"]
+    }]
+  },
+  options: { 
+    animation: { duration: 2000, easing: 'easeOutQuart' },
+    plugins: { legend: { position: 'bottom' } } 
+  }
+});
+</script>
+
+</body>
+</html>
