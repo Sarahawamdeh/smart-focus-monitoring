@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture Details - Yarmouk University</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: #ffffff;
+  color: #333;
+}
+
+/* HEADER */
+.header {
+  background-color: #0b6623;
+  color: white;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+.header img { height: 60px; margin-left: 15px; }
+.header-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: #0b6623;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+}
+
+/* CHARTS SECTION */
+.charts-section {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+#focusPie,
+#focusLine {
+  width: 320px !important;
+  height: 320px !important;
+}
+
+/* STATS UNDER CHARTS */
+.stats-box {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.card {
+  background: #f6faf7;
+  padding: 25px 35px;
+  border-radius: 12px;
+  text-align: center;
+  border-left: 5px solid #0b6623;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  width: 200px;
+}
+
+.card h3 {
+  margin: 0;
+  color: #0b6623;
+  font-size: 22px;
+}
+.card p {
+  font-size: 38px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 35px;
+}
+th, td {
+  padding: 14px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+th {
+  background-color: #0b6623;
+  color: white;
+}
+tr:hover { background-color: #e9f5ec; }
+
+/* BACK BUTTON */
+.back-btn {
+  margin-top: 30px;
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #0b6623;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+}
+.back-btn:hover { background-color: #064817; }
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 18px;
+  margin-top: 40px;
+  color: #0b6623;
+  background-color: #f4f6f8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <img src="info/YU.png">
+  <div class="header-title">Lecture Focus Details</div>
+</div>
+
+<div class="container">
+  <h2 id="lecture-date">Lecture Date:</h2>
+
+  <!-- CHARTS -->
+  <div class="charts-section">
+    <canvas id="focusPie"></canvas>
+    <canvas id="focusLine"></canvas>
+  </div>
+
+  <!-- STATS UNDER CHARTS -->
+  <div class="stats-box">
+    <div class="card">
+      <h3>Overall Focus</h3>
+      <p id="overallFocus">78%</p>
+    </div>
+    <div class="card">
+      <h3>Students</h3>
+      <p id="studentCount">5</p>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <table>
+    <tr>
+      <th>Student</th>
+      <th>Focus %</th>
+    </tr>
+    <tr><td>Student 1</td><td>82%</td></tr>
+    <tr><td>Student 2</td><td>76%</td></tr>
+    <tr><td>Student 3</td><td>68%</td></tr>
+    <tr><td>Student 4</td><td>90%</td></tr>
+    <tr><td>Student 5</td><td>74%</td></tr>
+  </table>
+
+  <a href="{{ url_for('history') }}" class="back-btn">⬅ Back</a>
+</div>
+
+<div class="footer">
+  ©️ 2025 Yarmouk University | Smart Student Focus Monitoring System
+</div>
+
+<script>
+// DATE
+const urlParams = new URLSearchParams(window.location.search);
+const date = urlParams.get('date') || "Unknown";
+document.getElementById("lecture-date").innerText = "Lecture Date: " + date;
+
+// SIMULATION DATA
+const students = ["Ahmad", "Sara", "Omar", "Hiba"];
+const focusLevels = [82, 76, 68, 90];
+document.getElementById("studentCount").innerText = students.length;
+
+// OVERALL FOCUS
+const overall = Math.round(focusLevels.reduce((a,b)=>a+b,0) / focusLevels.length);
+document.getElementById("overallFocus").innerText = overall + "%";
+
+// PIE CHART
+new Chart(document.getElementById("focusPie"), {
+  type: "pie",
+  data: {
+    labels: ["Focused", "Not Focused"],
+    datasets: [{
+      data: [overall, 100 - overall],
+      backgroundColor: ["#0b6623", "#c3d6c7"]
+    }]
+  },
+  options: {
+    plugins: { legend: { position: "bottom" } }
+  }
+});
+
+// LINE CHART
+const timeLabels = ["0","5","10","15","20","25","30"];
+const focusOverTime = [70,75,72,80,78,85,overall];
+
+new Chart(document.getElementById("focusLine"), {
+  type: "line",
+  data: {
+    labels: timeLabels,
+    datasets: [{
+      label: "Overall Focus %",
+      data: focusOverTime,
+      borderColor: "#0b6623",
+      backgroundColor: "rgba(11,102,35,0.15)",
+      fill: true,
+      tension: 0.4,
+      pointRadius: 5
+    }]
+  },
+  options: {
+  plugins: {
+    legend: { position: "bottom" }
+  },
+  scales: {
+    x: {
+      title: {
+        display: true,
+        text: "Time (Minutes)"
+      }
+    },
+    y: {
+      min: 0,
+      max: 100,
+      title: {
+        display: true,
+        text: "Overall Focus (%)"
+      }
+    }
+  }
+}
+
+});
+</script>
+
+</body>
+</html>
