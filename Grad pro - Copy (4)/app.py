@@ -218,8 +218,22 @@ def report(sess_id):
 
 @app.route("/monitor/<course_code>")
 def monitor(course_code):
-    return render_template("index.html", course_code=course_code)
+    if 'email' not in session:
+        return redirect(url_for('signin'))
 
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    
+    # بجيب السكشن بس لأن الكود (course_code) معي أصلاً
+    cursor.execute("SELECT section FROM courses WHERE c_code = ?", (course_code,))
+    course_data = cursor.fetchone()
+    conn.close()
+
+    # إذا لقى السكشن بياخده، إذا ما لقى بحط نص افتراضي
+    section = course_data['section'] if course_data else "Sec 1"
+
+    # بنبعث الكود والسكشن للـ HTML
+    return render_template("index.html", course_code=course_code, section=section)
 # الصفحة الأولى
 @app.route('/f_page')
 def f_page():
