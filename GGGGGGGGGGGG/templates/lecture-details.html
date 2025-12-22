@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lecture Details - Yarmouk University</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+  font-family: 'Poppins', sans-serif;
+  margin: 0;
+  background-color: #ffffff;
+  color: #333;
+}
+
+/* HEADER */
+.header {
+  background-color: #0b6623;
+  color: white;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+}
+.header img { height: 60px; margin-left: 15px; }
+.header-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* MAIN CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+
+h2 {
+  color: #0b6623;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 24px;
+}
+
+/* CHARTS SECTION */
+.charts-section {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  margin-bottom: 30px;
+}
+
+#focusPie,
+#focusLine {
+  width: 320px !important;
+  height: 320px !important;
+}
+
+/* STATS UNDER CHARTS */
+.stats-box {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.card {
+  background: #f6faf7;
+  padding: 25px 35px;
+  border-radius: 12px;
+  text-align: center;
+  border-left: 5px solid #0b6623;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  width: 200px;
+}
+
+.card h3 {
+  margin: 0;
+  color: #0b6623;
+  font-size: 22px;
+}
+.card p {
+  font-size: 38px;
+  font-weight: 700;
+  margin-top: 10px;
+}
+
+/* TABLE */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 35px;
+}
+th, td {
+  padding: 14px;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
+}
+th {
+  background-color: #0b6623;
+  color: white;
+}
+tr:hover { background-color: #e9f5ec; }
+
+/* BACK BUTTON */
+.back-btn {
+  margin-top: 30px;
+  display: inline-block;
+  padding: 12px 25px;
+  background-color: #0b6623;
+  color: white;
+  border-radius: 8px;
+  text-decoration: none;
+}
+.back-btn:hover { background-color: #064817; }
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 18px;
+  margin-top: 40px;
+  color: #0b6623;
+  background-color: #f4f6f8;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  <img src="/static/info/YU.png" alt="YU Logo">
+  <div class="header-title">Lecture Focus Details</div>
+</div>
+
+<div class="container">
+  <h2 id="lecture-date">Lecture Date: {{ report.created_at }}</h2>
+
+  <div class="charts-section">
+    <canvas id="focusPie"></canvas>
+    <canvas id="focusLine"></canvas>
+  </div>
+
+  <div class="stats-box">
+    <div class="card">
+      <h3>Overall Focus</h3>
+      <p id="overallFocus">{{ report.avg_focus }}%</p>
+    </div>
+    <div class="card">
+      <h3>Duration</h3>
+      <p id="durationDisplay">{{ report.duration }}</p>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Course Name</th>
+        <th>Code</th>
+        <th>Section</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>{{ report.c_name }}</td>
+        <td>{{ report.c_code }}</td>
+        <td>{{ report.section }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div style="text-align: center;">
+    <a href="{{ url_for('history', course_id=report.course_id) }}" class="back-btn">⬅ Back</a>
+  </div>
+</div>
+
+<div class="footer">
+  ©️ 2025 Yarmouk University | Smart Student Focus Monitoring System
+</div>
+
+<script>
+// جلب القيمة مع التأكد من وجود قيمة افتراضية لتجنب أخطاء المحرر
+const overallValue = Number("{{ report.avg_focus }}") || 0;
+
+// 1. PIE CHART
+const ctxPie = document.getElementById("focusPie");
+if (ctxPie) {
+    new Chart(ctxPie, {
+        type: "pie",
+        data: {
+            labels: ["Focused", "Not Focused"],
+            datasets: [{
+                data: [overallValue, 100 - overallValue],
+                backgroundColor: ["#0b6623", "#c3d6c7"]
+            }]
+        },
+        options: {
+            plugins: { legend: { position: "bottom" } }
+        }
+    });
+}
+
+// 2. LINE CHART
+const ctxLine = document.getElementById("focusLine");
+if (ctxLine) {
+    new Chart(ctxLine, {
+        type: "line",
+        data: {
+            labels: ["0%", "25%", "50%", "75%", "100%"],
+            datasets: [{
+                label: "Focus Progress %",
+                data: [0, 45, 65, 85, overallValue], 
+                borderColor: "#0b6623",
+                backgroundColor: "rgba(11,102,35,0.15)",
+                fill: true,
+                tension: 0.4,
+                pointRadius: 5
+            }]
+        },
+        options: {
+            plugins: { legend: { position: "bottom" } },
+            scales: {
+                y: { min: 0, max: 100 }
+            }
+        }
+    });
+}
+</script>
+
+</body>
+</html>

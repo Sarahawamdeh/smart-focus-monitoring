@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yarmouk University — Lecture Report</title>
+<style>
+  :root{
+    --y-green: #0b6b3a;
+    --muted: #6b7280;
+    --surface: #ffffff;
+    --bg: #f3f5f7;
+  }
+  *{box-sizing:border-box}
+  body{ margin:0; font-family: Inter, "Segoe UI", Roboto, Arial; background:var(--bg); color:#111827; }
+
+  .app { display:grid; grid-template-columns: 260px 1fr; min-height:100vh; }
+
+  .sidebar { background:var(--y-green); color:white; padding:28px 20px; display:flex; flex-direction:column; gap:18px; }
+  .brand{ display:flex; gap:12px; align-items:center; }
+  .logo{ width:44px; height:44px; border-radius:8px; background:white; color:var(--y-green); display:flex; align-items:center; justify-content:center; font-weight:700 }
+  nav{ margin-top:12px; display:flex; flex-direction:column; gap:8px }
+  .nav-item{ padding:10px 12px; border-radius:8px; color:rgba(255,255,255,0.95); text-decoration:none; display:flex; gap:12px }
+  .nav-item:hover{ background: rgba(255,255,255,0.06) }
+
+  .main { padding:28px; }
+  header.top{ display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; }
+  .controls{ display:flex; gap:12px }
+
+  .grid { display:grid; grid-template-columns: 1fr 420px; gap:18px; align-items:start; }
+  .left-col { display:grid; gap:18px }
+  .card { background:var(--surface); border-radius:10px; padding:18px; box-shadow: 0 6px 18px rgba(11,107,58,0.06) }
+
+  .focus-big { font-size:44px; color:var(--y-green); font-weight:800 }
+  .sub { color:var(--muted); font-size:13px }
+
+  .students-list { display:flex; flex-direction:column; gap:10px }
+  .student { display:flex; justify-content:space-between; align-items:center; padding:10px; border-radius:8px; background:#fbfcfd }
+  .student .meta{ display:flex; gap:12px; align-items:center }
+  .avatar{ width:44px;height:44px;border-radius:8px;background:#e6eef0; display:flex; align-items:center; justify-content:center; color:var(--y-green); font-weight:700; }
+
+  .btn {
+    background: var(--y-green);
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+  }
+  .btn:hover {
+    background: #095a31;
+  }
+
+  @media (max-width: 900px){
+    .app{ grid-template-columns: 1fr }
+    .grid{ grid-template-columns: 1fr }
+    .sidebar nav{ display:none }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">YU</div>
+      <div><div style="font-size:13px">Yarmouk University</div><div style="font-size:12px; opacity:0.9">Smart Focus</div></div>
+    </div>
+   <nav>
+  <a class="nav-item" href="{{ url_for('history', course_id=report.course_id) }}">Sessions</a>
+  <a class="nav-item" href="{{ url_for('logout') }}">Logout</a>
+</nav>
+
+    <div style="margin-top:auto; font-size:12px; opacity:0.95">©️ Yarmouk 2025</div>
+  </aside>
+
+  <main class="main">
+    <header class="top">
+      <div>
+        <h1 style="margin:0">Lecture Report</h1>
+        <div class="sub">Session Summary</div>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="left-col">
+        <!-- Overall Focus -->
+        <div class="card">
+  <div>
+    <div class="sub">Overall Class Focus</div>
+    <div class="focus-big" id="overallFocus">{{ report.avg_focus }}%</div>
+    
+    <div class="sub" style="margin-top:6px">
+        Session: {{ report.c_code }} — {{ report.c_name }}
+    </div>
+  </div>
+</div>
+
+        <!-- Students -->
+        <div class="card">
+          <div class="sub">Students Focus Levels</div>
+          <div class="students-list" id="studentsList">
+            <div class="student">
+              <div class="meta"><div class="avatar">1</div><div><div style="font-weight:700">Student 1</div></div></div>
+              <div style="font-weight:700; color:var(--y-green)">92%</div>
+            </div>
+            <div class="student">
+              <div class="meta"><div class="avatar">2</div><div><div style="font-weight:700">Student 2</div></div></div>
+              <div style="font-weight:700; color:var(--y-green)">85%</div>
+            </div>
+            <div class="student">
+              <div class="meta"><div class="avatar">3</div><div><div style="font-weight:700">Student 3</div></div></div>
+              <div style="font-weight:700; color:#f59e0b">68%</div>
+            </div>
+            <div class="student">
+              <div class="meta"><div class="avatar">4</div><div><div style="font-weight:700">Student 4</div></div></div>
+              <div style="font-weight:700; color:#0b6b3a">74%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+  <div class="card" style="margin-bottom:18px">
+    <div style="display:flex; justify-content:space-between; align-items:center">
+      <div>
+        <div class="sub">Session Info</div>
+        <div style="font-weight:700; margin-top:6px">Date: {{ report.created_at }}</div>
+        <div class="sub" style="margin-top:6px">Section: {{ report.section }}</div>
+        <div class="sub" style="margin-top:6px">Duration: <span>{{ report.duration }}</span></div>
+      </div>
+      <div>
+        <button class="btn" onclick="downloadReport()">Download Report</button>
+      </div>
+    </div>
+  </div>
+</div>
+    </section>
+  </main>
+</div>
+
+<script>
+// 1. استلام البيانات الحقيقية من السيرفر (Flask)
+// بنستخدم Jinja2 عشان نحط القيم داخل المتغيرات
+const finalFocus = "{{ report.avg_focus }}";
+const courseName = "{{ report.c_name }}";
+const courseCode = "{{ report.c_code }}";
+const sessionDate = "{{ report.created_at }}";
+const sessionDuration = "{{ report.duration }}";
+const sessionSection = "{{ report.section }}";
+
+// 2. تحديث نسبة التركيز الكلية في الصفحة (عشان نضمن إنها تظهر)
+document.getElementById("overallFocus").textContent = finalFocus + "%";
+
+// 3. دالة تحميل التقرير (Download CSV) المعدلة
+function downloadReport(){
+    // تجهيز محتوى ملف الـ CSV ببيانات المحاضرة الحقيقية
+    let csvContent = "Yarmouk University - Smart Focus Report\n";
+    csvContent += "---------------------------------------\n";
+    csvContent += `Course: ${courseName} (${courseCode})\n`;
+    csvContent += `Section: ${sessionSection}\n`;
+    csvContent += `Date: ${sessionDate}\n`;
+    csvContent += `Duration: ${sessionDuration}\n`;
+    csvContent += `Overall Focus Result: ${finalFocus}%\n`;
+    csvContent += "---------------------------------------\n";
+    csvContent += "Generated by Smart Focus System\n";
+
+    // عملية التحميل
+    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.setAttribute('href', url);
+    // اسم الملف رح يكون مثلاً: Report_Database_2025-05-20.csv
+    a.setAttribute('download', `Report_${courseCode}_${sessionDate}.csv`);
+    a.click();
+    
+    // تنظيف الذاكرة
+    URL.revokeObjectURL(url);
+}
+</script>
+
+</body>
+</html>
