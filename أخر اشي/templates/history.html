@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historical Focus Data</title>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background-color: #f4f6f8;
+      color: #333;
+    }
+
+    /* Header */
+    .header {
+      background-color: #0b6623;
+      color: white;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+
+    .header img {
+      height: 55px;
+      margin-right: 15px;
+    }
+
+    .header-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 26px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #0b6623;
+      margin-bottom: 25px;
+      text-align: center;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: center;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    th, td {
+      padding: 14px 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #0b6623;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    tr:hover {
+      background-color: #e8f5e9;
+      transition: 0.2s;
+    }
+
+    td:nth-child(3) {
+      font-weight: 600;
+      color: #0b6623;
+    }
+
+    /* Back button */
+    .back-btn {
+      display: inline-block;
+      margin-top: 25px;
+      padding: 12px 25px;
+      background-color: #0b6623;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 15px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: background-color 0.3s;
+    }
+
+    .back-btn:hover {
+      background-color: #084e1b;
+    }
+
+    /* Footer */
+    .footer {
+       width: 100%;
+       text-align: center;
+       padding: 12px 0;
+       color: #0b6623;   
+       font-size: 14px;
+       margin-top: auto;
+    }
+  </style>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const rows = document.querySelectorAll('table tr[data-href]');
+      rows.forEach(row => {
+        row.addEventListener('click', () => {
+          window.location.href = row.getAttribute('data-href');
+        });
+      });
+    });
+  </script>
+</head>
+<body>
+
+  <div class="header">
+    <img src="info/YU.png" alt="Yarmouk Logo">
+    <div class="header-title">Yarmouk University - Historical Focus Data</div>
+  </div>
+
+  <div class="container">
+    <h2>Overall Focus Summary</h2>
+
+    <table>
+  <thead>
+    <tr>
+      <th>Course Name</th>
+      <th>Date & Time</th>
+      <th>Duration</th>
+      <th>Overall Focus (%)</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for sess in sessions %}
+    <tr onclick="window.location.href='/report-page?id={{ sess.s_id }}'" style="cursor:pointer;">
+    <td>{{ sess.c_name }}</td>
+    <td>{{ sess.created_at }}</td>
+    <td>{{ sess.duration }}</td>
+    <td>{{ sess.avg_focus }}%</td>
+</tr>
+    {% else %}
+    <tr>
+      <td colspan="4">No sessions found yet.</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+    <div style="text-align:center;">
+      <a href="{{ url_for('show_courses') }}" class="back-btn">Back</a>
+    </div>
+  </div>
+
+  <div class="footer">
+    ©️ 2025 Yarmouk University | Smart Student Focus Monitoring System
+  </div>
+
+</body>
+</html>
