@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up</title>
+  <link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='ssfm.jpeg') }}">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: 
+        linear-gradient(rgba(255,255,255,0.25), rgba(255,255,255,0.25)),
+        url("/static/YU.png") no-repeat center center fixed;
+      background-size: 350px;
+      background-color: #f3f4f6;
+    }
+
+    .header {
+      background-color: #0b6623;
+      color: white;
+      text-align: center;
+      padding: 20px 10px;
+      font-size: 26px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .header .logo {
+      position: absolute;
+      left: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 60px;
+      height: auto;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.97);
+      border-radius: 12px;
+      padding: 40px 45px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+      width: 370px;
+      text-align: center;
+    }
+
+    .login-box h2 {
+      color: #0b6623;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
+    .input-group {
+      margin-bottom: 18px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      color: #333;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1.5px solid #ccc;
+      border-radius: 8px;
+      font-size: 15px;
+    }
+
+    .btn {
+      width: 100%;
+      background-color: #0b6623;
+      color: white;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 10px;
+      transition: background-color 0.3s;
+    }
+
+    .btn:hover {
+      background-color: #084e1b;
+    }
+
+    .switch {
+      margin-top: 18px;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .switch a {
+      color: #0b6623;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .switch a:hover {
+      text-decoration: underline;
+    }
+    footer {
+     width: 100%;
+     text-align: center;
+     padding: 10px 0;
+     background: none;
+     color: #0b6623;
+     font-size: 14px;
+     margin-top: 25px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <img src="{{ url_for('static', filename='yu.png') }}" class="logo" alt="YU Logo">
+    Smart Student Focus Monitoring System
+  </div>
+
+  <div class="container">
+    <div class="login-box">
+      <h2>Instructor Sign Up</h2>
+
+      <form action="{{ url_for('signup') }}" method="POST">
+
+  <div class="input-group">
+    <label for="fullname">Full Name</label>
+    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+  </div>
+
+  <div class="input-group">
+    <label for="email">University Email</label>
+    <input type="email" id="email" name="email" placeholder="Enter your email" required>
+  </div>
+
+  
+  <div class="input-group">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" placeholder="Enter password" required>
+  </div>
+
+  <div class="input-group">
+    <label for="confirm_password">Confirm Password</label>
+    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm password" required>
+  </div>
+
+  <button type="submit" class="btn">Create Account</button>
+
+  <div class="switch">
+    Already have an account? <a href="{{ url_for('signin') }}">Sign In</a>
+  </div>
+
+</form>
+
+
+    </div>
+  </div>
+  <footer>
+    © 2025 Yarmouk University — Smart Student Focus Monitoring System
+  </footer>
+</body>
+</html>

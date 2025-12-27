@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Smart Focus Monitoring — Yarmouk University</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="icon" type="image/jpeg" href="{{ url_for('static', filename='ssfm.jpeg') }}">
+
+
+<style>
+/* ======= GENERAL ======= */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #f9f9f9;
+    background-image: repeating-linear-gradient(
+        45deg, #f9f9f9, #f9f9f9 10px,
+        #f1f1f1 10px, #f1f1f1 20px
+    );
+    color: #222;
+}
+
+.wrap {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ======= TOP BAR ======= */
+.topbar {
+    background: #006b38;
+    color: white;
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    font-size: 16px;
+    font-weight: 600;
+    border-bottom: 3px solid #004d28;
+}
+
+/* ======= MAIN LAYOUT ======= */
+.main {
+    flex: 1;
+    display: flex;
+    padding: 10px;
+    gap: 10px;
+}
+
+.left-panel,
+.right-panel {
+    width: 22%;
+    background: #f4f4f4;
+    border-radius: 12px;
+    padding: 12px;
+    overflow-y: auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.left-panel h4, 
+.right-panel h4 {
+    color: #000301;
+    margin-top: 0;
+    margin-bottom: 5px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+}
+
+.center {
+    flex: 1;
+}
+
+/* ======= CAMERA AREA ======= */
+.camera-frame {
+    width: 100%;
+    height: 420px;
+    background: #eaeaea;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    border: 2px solid #006b38;
+}
+
+.neon-border {
+    position: absolute;
+    inset: 0;
+    border: 3px solid #006b38;
+    filter: drop-shadow(0 0 6px #006b38);
+    pointer-events: none;
+    transition: 0.3s;
+}
+
+.video-box {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.controls {
+    margin-top: 10px;
+    display: flex;
+    justify-content: flex-start; 
+    gap: 10px;
+    flex-wrap: wrap; 
+}
+
+.btn {
+    flex: 1;
+    padding: 10px 0;
+    border-radius: 5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: 0.3s;
+    font-size: 14px;
+    background-color: #0b6623;
+    color: white;
+    text-align: center;
+}
+
+.btn:hover {
+    background-color: #064817;
+    transform: scale(1.05);
+}
+
+.btn.start, .btn.stop, .btn.view {
+    background-color: #0b6623;
+    color: white;
+}
+
+/* ======= SHOW DETAILS BUTTON ======= */
+.show-details-btn {
+    margin: 20px auto 0; /* التوسيط */
+    display: none;       /* مخفي في البداية */
+    width: fit-content;  /* يأخذ حجم النص فقط */
+    min-width: 200px;    /* عرض أدنى ليظهر بشكل جميل */
+    padding: 10px 25px;
+    background: linear-gradient(135deg, #007a3d, #004d28);
+    color: #fff;
+    font-weight: 600;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    text-align: center;
+}
+
+.show-details-btn:hover {
+    transform: translateY(-2px) scale(1.03);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.3);
+    background: linear-gradient(135deg, #00914d, #006b38);
+}
+
+.show-details-btn:active {
+    transform: translateY(0px) scale(0.97);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+}
+
+/* ======= STUDENT LIST ======= */
+.student {
+    padding: 6px;
+    margin-bottom: 5px;
+    background: #fff;
+    border-radius: 5px;
+    border: 1px solid #c9c9c9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.student:hover {
+    background: #dff0d8;
+    transform: scale(1.01);
+}
+
+.card {
+    background: #fff;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+    font-size: 14px;
+}
+
+#liveCam {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+#startMsg {
+    color: #333;
+}
+
+/* ===== RANDOM QUESTION MODAL ===== */
+#questionModal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 1000;
+    width: 300px;
+    text-align: center;
+}
+
+#questionText {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+#courseName {
+    font-weight: 700;   /* غامق شوية */
+    font-size: 34px;    /* أكبر من السكشن */
+    color: #000b06;     /* لون الجامعة */
+}
+
+#sectionName {
+    font-weight: 600;   /* أخف من الكورس */
+    font-size: 22px;    /* أصغر من الكورس */
+    color: rgb(0, 7, 4);     /* أغمق قليلًا */
+}
+
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="topbar">
+    <div class="brand">Yarmouk University — Smart Focus Monitoring</div>
+    <div class="overall" id="overallText">OVERALL CLASS FOCUS: -- %</div>
+    <div class="timer" id="sessionTimer">Session Timer: 00:00:00</div>
+</header>
+
+<main class="main">
+
+<section class="left-panel">
+    <h4>
+        <span id="courseName">{{ course_name }}</span><br>
+        <span id="courseCode" style="font-size: 14px; color: #666;">{{ course_code }}</span><br>
+        <span id="sectionName">Section: {{ section }}</span>
+    </h4>
+
+    <h3>Individual Student Focus</h3>
+    <div id="studentsList"></div>
+</section>
+
+<section class="center">
+
+    <div class="camera-frame">
+        <div class="neon-border"></div>
+
+        <div class="video-box" id="videoBox">
+            <img id="liveCam" src="">
+            <p id="startMsg">🎥 Click Start Monitoring to begin</p>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn stop" id="stopBtn" disabled>STOP AND SAVE</button>
+        <button class="btn start" id="startBtn">START MONITORING</button>
+        <button class="btn start" id="highlightBtn">RANDOM STUDENT</button>
+        <button class="btn view" id="randomQuestionBtn">RANDOM QUESTION</button>
+    </div>
+
+    <div style="width: 100%; display: flex; justify-content: center; margin-top: 10px;">
+    <a id="showDetailsBtn" class="show-details-btn">Show Details</a>
+</div>
+
+</section>
+
+<aside class="right-panel">
+    <h4>Date: <span id="dateInfo">-- / -- / ----</span></h4>
+    <h3>Aggregate Analytics</h3>
+
+    <div class="card">
+        <div style="font-weight:700;">Average Focus</div>
+        <div style="font-size:24px;color:#006b38;" id="avgFocusText">--%</div>
+        <div style="font-size:12px;color:#888;">Live Average</div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight:700;">Highest Focused Student</div>
+        <div id="topStudent">--</div>
+    </div>
+
+    <div class="card">
+        <div style="font-weight:700;">Lowest Focused Student</div>
+        <div id="lowStudent">--</div>
+    </div>
+</aside>
+
+</main>
+</div>
+
+<div id="questionModal">
+    <p id="questionText"></p>
+    <button id="closeQuestionBtn" class="btn view">CLOSE</button>
+</div>
+
+<script>
+// --- VARIABLES ---
+const studentsListEl    = document.getElementById('studentsList');
+const liveCam           = document.getElementById('liveCam');
+const startMsg          = document.getElementById('startMsg');
+const overallText       = document.getElementById('overallText');
+const avgFocusText      = document.getElementById('avgFocusText');
+const topStudentEl      = document.getElementById('topStudent');
+const lowStudentEl      = document.getElementById('lowStudent');
+const highlightBtn      = document.getElementById('highlightBtn');
+const randomQuestionBtn = document.getElementById('randomQuestionBtn');
+const questionModal     = document.getElementById('questionModal');
+const questionText      = document.getElementById('questionText');
+const closeQuestionBtn  = document.getElementById('closeQuestionBtn');
+const showDetailsBtn    = document.querySelector('.show-details-btn');
+const dateInfoEl        = document.getElementById('dateInfo');
+
+let fetchIntervalID = null;
+let sessionSec = 0;
+let sessionTimerID = null;
+let monitoringStarted = false; 
+let highlightedStudentId = null;
+
+// --- BUILD STUDENTS LIST ---
+// --- BUILD STUDENTS LIST ---
+const MAX_EXPECTED = 5;
+for (let i = 0; i < MAX_EXPECTED; i++) {
+    const div = document.createElement('div');
+    div.className = 'student';
+    div.id = `student-${i}`;
+    div.innerHTML = `
+        <span class="name">Student ${i + 1}</span>
+        <span class="focus" id="student-${i}-focus">--%</span>
+    `;
+    // حذفنا سطر الـ onclick بالكامل من هنا
+    studentsListEl.appendChild(div);
+}
+
+// --- START / STOP ---
+document.getElementById('startBtn').addEventListener('click', startMonitoring);
+document.getElementById('stopBtn').addEventListener('click', stopMonitoring);
+
+// --- RANDOM STUDENT ---
+highlightBtn.addEventListener('click', async () => {
+    if (!monitoringStarted) {
+        alert("⚠ Please start monitoring first!");
+        return;
+    }
+    try {
+        const res = await fetch('/highlight_random');
+        if (!res.ok) return;
+        const payload = await res.json();
+        highlightedStudentId = payload.selected;
+    } catch (e) {
+        console.error(e);
+    }
+});
+
+// --- RANDOM QUESTION ---
+const questions = [
+    "What was the last topic we talked about in the lecture?",
+    "What does 'cloud storage' mean?",
+    "What is the capital of Jordan?",
+    "What is the name of the course and its code?",
+    "Define IP address.",
+    "What does HTML stand for?",
+    "Explain TCP vs UDP.",
+    "What does URL stand for?",
+    "What is a variable?"
+];
+
+randomQuestionBtn.addEventListener('click', () => {
+    if (!monitoringStarted) {
+        alert("⚠ Please start monitoring first!");
+        return;
+    }
+    const q = questions[Math.floor(Math.random() * questions.length)];
+    questionText.innerText = q;
+    questionModal.style.display = 'block';
+});
+
+closeQuestionBtn.addEventListener('click', () => {
+    questionModal.style.display = 'none';
+});
+
+async function stopMonitoring() {
+    // 1. إخبار السيرفر بإطفاء الكاميرا فوراً
+    await fetch('/stop_camera'); 
+
+    // 2. إيقاف العدادات وتحديث الحالة في المتصفح
+    if (fetchIntervalID) clearInterval(fetchIntervalID);
+    if (sessionTimerID) clearInterval(sessionTimerID);
+    monitoringStarted = false; 
+
+    const videoCam = document.getElementById('liveCam');
+    if (videoCam) {
+        videoCam.src = ""; 
+        videoCam.style.display = 'none';
+    }
+
+    // تعطيل زر الستوب لمنع الضغط المتكرر
+    const stopBtn = document.getElementById('stopBtn');
+    stopBtn.disabled = true;
+
+    // 3. تجميع بيانات الطلاب الحاليين من الواجهة
+    // --- (داخل دالة stopMonitoring) ---
+
+const studentsArray = [];
+
+// MAX_EXPECTED هي 5 حسب كودك
+for (let i = 0; i < MAX_EXPECTED; i++) {
+    const focusEl = document.getElementById(`student-${i}-focus`);
+    
+    if (focusEl) {
+        const focusVal = focusEl.innerText.replace('%', '');
+        
+        // نتحقق أن الطالب ظهر فعلاً أمام الكاميرا (قيمته ليست --)
+        if (focusVal !== '--' && focusVal !== '') {
+            
+            // هنا نجهز الكائن (Object) لإرساله للسيرفر
+            studentsArray.push({
+                name: `Student ${i + 1}`, // الاسم (مثلاً Student 1)
+                focus: parseFloat(focusVal) // نسبة التركيز كرققم
+            });
+            
+        }
+    }
+}
+
+    // 4. تجميع البيانات العامة (المدة والمتوسط والـ Section ID)
+    const durationValue = document.getElementById("sessionTimer").innerText.replace("Session Timer: ", "").trim();
+    const avgFocusText = document.getElementById("avgFocusText");
+    const avgFocusValue = avgFocusText ? parseFloat(avgFocusText.innerText) : 0;
+    
+    // --- التعديل الأهم هنا ---
+    // نستخدم المتغير القادم من بايثون مباشرة (Jinja2 variable)
+    const sectionId = "{{ section_id }}"; 
+
+    try {
+        const response = await fetch('/save_session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                course_id: sectionId, // نرسل الـ section_id ليرتبط بجدول sessions
+                duration: durationValue,
+                avg_focus: avgFocusValue,
+                students_data: studentsArray 
+            })
+        });
+
+        const result = await response.json();
+        
+        if (result.status === "success") {
+            alert("✅ تم الحفظ بنجاح وتخزين بيانات الطلاب!");
+            
+            const detailsBtn = document.getElementById('showDetailsBtn');
+            if (detailsBtn) {
+                detailsBtn.style.display = 'block';
+                // نستخدم المعرف الجديد الراجع من السيرفر لعرض التقرير
+                detailsBtn.href = `/last-report?id=${result.session_id}`; 
+            }
+        } else {
+            alert("❌ فشل الحفظ: " + result.message);
+            stopBtn.disabled = false;
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        alert("❌ حدث خطأ في الاتصال بالسيرفر!");
+        stopBtn.disabled = false;
+    }
+}
+
+function startMonitoring() {
+    // نطلب من السيرفر تشغيل الكاميرا أولاً
+    fetch('/start_camera').then(response => {
+        if (response.ok) {
+            // بمجرد ما السيرفر يأكد التشغيل، بنفتح البث
+            liveCam.src = '/video_feed';
+            liveCam.style.display = 'block';
+            startMsg.style.display = 'none';
+        }
+    });
+    // تفعيل زر الستوب عند البدء
+    document.getElementById('stopBtn').disabled = false;
+    document.getElementById('stopBtn').style.opacity = "1";
+    document.getElementById('stopBtn').style.cursor = "pointer";
+
+    liveCam.style.display = 'block';
+    startMsg.style.display = 'none';
+    liveCam.src = '/video_feed';
+
+    if (fetchIntervalID) clearInterval(fetchIntervalID);
+    fetchIntervalID = setInterval(fetchFocusData, 500);
+
+    if (sessionTimerID) clearInterval(sessionTimerID);
+    sessionSec = 0;
+    document.getElementById("sessionTimer").innerText = "Session Timer: 00:00:00";
+
+    sessionTimerID = setInterval(() => {
+        sessionSec++;
+        let h = String(Math.floor(sessionSec / 3600)).padStart(2, "0"),
+            m = String(Math.floor((sessionSec % 3600) / 60)).padStart(2, "0"),
+            s = String(sessionSec % 60).padStart(2, "0");
+
+        document.getElementById("sessionTimer").innerText =
+            `Session Timer: ${h}:${m}:${s}`;
+    }, 1000);
+
+    monitoringStarted = true;
+    showDetailsBtn.style.display = 'none';
+}
+
+// --- FETCH FOCUS DATA ---
+async function fetchFocusData() {
+    try {
+        const res = await fetch('/focus-data', { cache: "no-store" });
+        if (!res.ok) return;
+        const payload = await res.json();
+
+        overallText.innerText = `OVERALL CLASS FOCUS: ${payload.overall}%`;
+        avgFocusText.innerText = `${payload.overall}%`;
+
+        for (let i = 0; i < MAX_EXPECTED; i++) {
+            const el = document.getElementById(`student-${i}-focus`);
+            if (el) el.innerText = '--%';
+        }
+
+        let top = { id: null, focus: -1 };
+        let low = { id: null, focus: 101 };
+
+        payload.students.forEach(s => {
+            const el = document.getElementById(`student-${s.id}-focus`);
+            if (el) el.innerText = `${s.focus}%`;
+            if (s.focus > top.focus) top = { id: s.id, focus: s.focus };
+            if (s.focus < low.focus) low = { id: s.id, focus: s.focus };
+        });
+
+        topStudentEl.innerText = top.id !== null ? `Student ${top.id + 1} (${top.focus}%)` : '--';
+        lowStudentEl.innerText = low.id !== null ? `Student ${low.id + 1} (${low.focus}%)` : '--';
+
+    } catch (e) {
+        console.error("Error fetching focus-data:", e)
+    }
+}
+
+// --- UPDATE DATE ---
+function updateDateTime() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const formattedDate = now.toLocaleDateString('ar-JO', options);
+    dateInfoEl.textContent = formattedDate;
+}
+
+// --- INIT ---
+updateDateTime();
+// --- CHECK URL PARAMETER TO AUTO-START ---
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('autostart') === '1') {
+    startMonitoring();
+}
+
+</script>
+</body>
+</html>
